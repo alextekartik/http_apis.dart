@@ -23,5 +23,13 @@ doc/api/
 *.js.deps
 *.js.map
 
+# IDE
+*.iml
+.idea/
+.vscode/
+
+# Local
+.local/
+
 .flutter-plugins
 .flutter-plugins-dependencies
