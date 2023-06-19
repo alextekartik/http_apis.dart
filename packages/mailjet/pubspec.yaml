@@ -1,6 +1,6 @@
 name: tekartik_mailjet
 description: Mail jet http client.
-version: 1.0.0
+version: 0.1.0
 publish_to: none
 
 environment:
