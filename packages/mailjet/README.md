@@ -1,3 +1,7 @@
+## Versioning
+
+Follow [Tekartik git versioning system](https://github.com/tekartik/common.dart/blob/main/doc/tekartik_versioning.md)
+
 ## Setup
 
 ```yaml
