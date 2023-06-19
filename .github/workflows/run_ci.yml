@@ -19,8 +19,8 @@ jobs:
         dart: [2.19.6, stable, beta, dev]
     steps:
       - uses: actions/checkout@v3
-      - uses: dart-lang/setup-dart@v1.3
-        with:
+      - uses: dart-lang/setup-dart@v1.4
+sssssssssssssssssssssssssssssssssssss        with:
           sdk: ${{ matrix.dart }}
       - run: dart --version
       - run: dart pub global activate dev_test
