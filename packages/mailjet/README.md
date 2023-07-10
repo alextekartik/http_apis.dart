@@ -10,6 +10,6 @@ dependencies:
     git:
       url: https://github.com/alextekartik/http_apis.dart
       path: packages/mailjet
-      ref: dart2_3
+      ref: dart3a
     version: '>=0.1.0'
 ```
