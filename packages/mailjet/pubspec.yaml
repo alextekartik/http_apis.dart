@@ -4,7 +4,7 @@ version: 0.1.0
 publish_to: none
 
 environment:
-  sdk: '>=3.0.0 <4.0.0'
+  sdk: '>=2.19.6 <4.0.0'
 
 # Add regular dependencies here.
 dependencies:
@@ -14,7 +14,7 @@ dependencies:
     git:
       url: https://github.com/tekartik/http.dart
       path: http
-      ref: dart3a
+      ref: dart2_3
     version: '>=0.5.5'
 dev_dependencies:
   lints: '>=2.0.0'
