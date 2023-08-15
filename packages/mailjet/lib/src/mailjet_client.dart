@@ -12,11 +12,18 @@ import 'mailjet_models.dart';
 /// To set before creating the client.
 var debugMailjet = false;
 
+class MailjetCredentials {
+  final String apiKey;
+  final String apiSecret;
+  MailjetCredentials(this.apiKey, this.apiSecret);
+}
+
 /// The main client
 class MailjetClient {
   final _debug = debugMailjet;
-  final String apiKey;
-  final String apiSecret;
+  late final MailjetCredentials credentials;
+  String get apiKey => credentials.apiKey;
+  String get apiSecret => credentials.apiSecret;
   late final http.Client _client;
 
   static String _getAuthString(String username, String password) {
@@ -27,11 +34,15 @@ class MailjetClient {
     return authString;
   }
 
-  MailjetClient(
-      {required this.apiKey, required this.apiSecret, http.Client? client}) {
+  MailjetClient.widthCredentials(this.credentials, {http.Client? client}) {
     _client = client ?? http.Client();
     initMailjetCvBuilders();
   }
+
+  MailjetClient(
+      {required String apiKey, required String apiSecret, http.Client? client})
+      : this.widthCredentials(MailjetCredentials(apiKey, apiSecret),
+            client: client);
 
   /// The main way to send an email
   Future<CvMailjetSendEmailResponse> sendEmail(
