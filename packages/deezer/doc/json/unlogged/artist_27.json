@@ -1,0 +1,16 @@
+{
+  "id": 27,
+  "name": "Daft Punk",
+  "link": "http://www.deezer.com/artist/27",
+  "share": "https://www.deezer.com/artist/27?utm_source=deezer&utm_content=artist-27&utm_term=0_1696029903&utm_medium=web",
+  "picture": "http://api.deezer.com/2.0/artist/27/image",
+  "picture_small": "http://e-cdn-images.dzcdn.net/images/artist/f2bc007e9133c946ac3c3907ddc5d2ea/56x56-000000-80-0-0.jpg",
+  "picture_medium": "http://e-cdn-images.dzcdn.net/images/artist/f2bc007e9133c946ac3c3907ddc5d2ea/250x250-000000-80-0-0.jpg",
+  "picture_big": "http://e-cdn-images.dzcdn.net/images/artist/f2bc007e9133c946ac3c3907ddc5d2ea/500x500-000000-80-0-0.jpg",
+  "picture_xl": "http://e-cdn-images.dzcdn.net/images/artist/f2bc007e9133c946ac3c3907ddc5d2ea/1000x1000-000000-80-0-0.jpg",
+  "nb_album": 38,
+  "nb_fan": 4498944,
+  "radio": true,
+  "tracklist": "http://api.deezer.com/2.0/artist/27/top?limit=50",
+  "type": "artist"
+}
