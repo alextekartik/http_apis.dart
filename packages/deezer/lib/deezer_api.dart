@@ -1,5 +1,7 @@
 export 'src/deezer_album.dart';
 export 'src/deezer_api.dart';
+export 'src/deezer_api_exception.dart';
+export 'src/deezer_api_options.dart';
 export 'src/deezer_app.dart';
 export 'src/deezer_artist.dart';
 export 'src/deezer_error.dart';
