@@ -1,15 +1,23 @@
 import 'package:path/path.dart';
 import 'package:tekartik_deezer_api/deezer_api.dart';
 import 'package:tekartik_deezer_api/src/import.dart';
+import 'package:tekartik_deezer_api/src/platform/jsonp.dart';
 
 import 'deezer_auth_client.dart';
 
 var debugDeezerApi = false;
 
+extension UriJsonp on Uri {
+  Uri withJsonp() => replace(
+      queryParameters: Map<String, Object?>.from(queryParameters)
+        ..['output'] = 'jsonp');
+}
+
 class DeezerApi {
   final String? code;
   final String? accessToken;
   final DeezerApiOptions? options;
+  final bool useJsonp;
 
   late final _authClient = DeezerAuthClient(this);
 
@@ -18,12 +26,19 @@ class DeezerApi {
     _authClient.authToken = authToken;
   }
 
-  DeezerApi({this.code, this.accessToken, this.options}) {
+  DeezerApi(
+      {this.code,
+      this.accessToken,
+      this.options,
+
+      /// Web only to go around CORS, automatically set to true when running on the web
+      bool? useJsonp})
+      : useJsonp = useJsonp ?? needJsonp {
     // assert(code != null || accessToken != null);
     initDeezerCvBuilders();
   }
 
-  final _baseUrl = Uri.parse('http://api.deezer.com/2.0');
+  final _baseUrl = Uri.parse('https://api.deezer.com/2.0');
   Future<DeezerUser> getMe() async {
     var uri = Uri.parse('https://api.deezer.com/user/me');
     var body = await _authClient.read(uri);
@@ -41,8 +56,14 @@ class DeezerApi {
   }
 
   Future<Model> _readMap(Uri uri) async {
-    var body = await _authClient.read(uri);
-    return jsonDecode(body) as Model;
+    if (useJsonp) {
+      // Unauth only
+      uri = uri.withJsonp();
+      return asModel((await jsonpRequest(uri)) as Map);
+    } else {
+      var body = await _authClient.read(uri);
+      return jsonDecode(body) as Model;
+    }
   }
 
   Future<Model> getArtistRaw(String id) async {
