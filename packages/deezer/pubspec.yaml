@@ -15,7 +15,7 @@ dependencies:
       ref: dart3a
       path: app_http
     version: '>=0.1.0'
-  cv:
+  cv: '>=0.2.14'
   http:
 dev_dependencies:
   lints: '>=2.0.0'
