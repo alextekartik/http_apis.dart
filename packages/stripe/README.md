@@ -6,7 +6,7 @@ Follow [Tekartik git versioning system](https://github.com/tekartik/common.dart/
 
 ```yaml
 dependencies:
-  tekartik_mailjet:
+  tekartik_stripe_api:
     git:
       url: https://github.com/alextekartik/http_apis.dart
       path: packages/stripe
