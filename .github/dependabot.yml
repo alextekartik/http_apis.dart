@@ -8,7 +8,14 @@ updates:
     directory: "packages/mailjet"
     schedule:
       interval: "monthly"
-
+  - package-ecosystem: "pub"
+    directory: "packages/deezer"
+    schedule:
+      interval: "monthly"
+  - package-ecosystem: "pub"
+    directory: "packages/strip"
+    schedule:
+      interval: "monthly"
   - package-ecosystem: "github-actions"
     directory: "/"
     schedule:
