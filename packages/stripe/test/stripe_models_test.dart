@@ -11,6 +11,11 @@ void main() {
     expect((StripeApiPrice()..fillModel(apiFillOptions)).toMap(),
         {'id': 'text_1'});
   });
+  test('StripeApiProduct', () {
+    expect(
+        (newModel().cv<StripeApiProduct>()..fillModel(apiFillOptions)).toMap(),
+        {'id': 'text_1'});
+  });
   test('StripeApiPaymentLink', () {
     var paymentLink = StripeApiPaymentLink()..fillModel(apiFillOptions);
     expect(paymentLink.toMap(), {'id': 'text_1', 'url': 'text_2'});
