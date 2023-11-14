@@ -1,14 +1,22 @@
+import 'api_options.dart';
+
 class StripeApiPriceOptions {
   final String productId;
   final double amount;
   final String currency;
   final StringApiPriceRecurring? recurring;
+  final StripeApiMetadata? metadata;
+
+  /// A brief description of the price, hidden from customers.
+  final String? nickname;
 
   StripeApiPriceOptions(
       {required this.amount,
       required this.currency,
       required this.productId,
-      this.recurring});
+      this.nickname,
+      this.recurring,
+      this.metadata});
 }
 
 /// Optional recurring.

@@ -7,7 +7,9 @@ import 'package:path/path.dart';
 import 'package:tekartik_common_utils/common_utils_import.dart';
 import 'package:tekartik_http/basic_auth_client.dart';
 import 'package:tekartik_http/http_client.dart';
+import 'package:tekartik_stripe_api/src/api_options.dart';
 import 'package:tekartik_stripe_api/src/format.dart';
+import 'package:tekartik_stripe_api/src/payment_link_options.dart';
 import 'package:tekartik_stripe_api/src/price_model.dart';
 import 'package:tekartik_stripe_api/src/price_options.dart';
 import 'package:tekartik_stripe_api/src/product_model.dart';
@@ -29,6 +31,21 @@ class StripeApiCredentials {
 
   StripeApiCredentials({this.secretKey, this.publishableKey}) {
     assert(secretKey != null || publishableKey != null);
+  }
+}
+
+typedef StripeApiBodyFields = Map<String, String>;
+
+// ignore: prefer_collection_literals
+StripeApiBodyFields newStripeApiBodyFields() => StripeApiBodyFields();
+
+extension StripeApiBodyFieldsExt on StripeApiBodyFields {
+  void addMetadata(StripeApiMetadata? metadata) {
+    if (metadata != null) {
+      for (var entry in metadata.entries) {
+        this['metadata[${entry.key}]'] = '${entry.value}';
+      }
+    }
   }
 }
 
@@ -88,13 +105,32 @@ class StripeApi {
   }
 
   /// Create a payment link from a give price.
-  Future<StripeApiPaymentLink> createPaymentLink(
-      {required String priceId}) async {
+  /// https://stripe.com/docs/api/payment_links/payment_links/create
+  Future<StripeApiPaymentLink> createPaymentLinkOld(
+      StripeApiPaymentLinkOptionsOld options) async {
     var uri = _uri('payment_links');
-    var bodyFields = {
-      'line_items[0][price]': priceId,
-      'line_items[0][quantity]': '1'
-    };
+    var bodyFields = newStripeApiBodyFields();
+    for (var (index, price) in options.prices.indexed) {
+      bodyFields['line_items[$index][price]'] = price.priceId;
+      bodyFields['line_items[$index][quantity]'] = '${price.quantity ?? 1}';
+    }
+    var subscriptData = options.subscriptionData;
+    if (subscriptData?.description != null) {
+      bodyFields['subscription_data[description]'] =
+          subscriptData!.description!;
+    }
+    bodyFields.addMetadata(options.metadata);
+    print(jsonPretty(bodyFields));
+    //throw Exception();
+    return _send<StripeApiPaymentLink>(uri, bodyFields);
+  }
+
+  /// Create a payment link from a give price.
+  /// https://stripe.com/docs/api/payment_links/payment_links/create
+  Future<StripeApiPaymentLink> createPaymentLink(
+      StripeApiPaymentLinkCreate options) async {
+    var uri = _uri('payment_links');
+    var bodyFields = options.toStripeApiBodyFields();
     return _send<StripeApiPaymentLink>(uri, bodyFields);
   }
 
@@ -120,6 +156,8 @@ class StripeApi {
         'recurring[interval_count]': recurring.intervalCount.toString(),
       });
     }
+    bodyFields.addMetadata(options.metadata);
+
     return _send<StripeApiPrice>(uri, bodyFields);
   }
 
@@ -131,15 +169,9 @@ class StripeApi {
   }
 
   /// Create a product with optional options.
-  Future<StripeApiProduct> createProduct(
-      StripeApiProductOptions options) async {
+  Future<StripeApiProduct> createProduct(StripeApiProductCreate options) async {
     var uri = _uri('products');
-
-    var bodyFields = <String, String>{
-      'name': options.name,
-      if (options.description != null) 'description': options.description!,
-    };
-
+    var bodyFields = options.toStripeApiBodyFields();
     return _send<StripeApiProduct>(uri, bodyFields);
   }
 
