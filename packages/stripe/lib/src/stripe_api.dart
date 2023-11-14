@@ -141,7 +141,8 @@ class StripeApi {
   }
 
   /// Create a price with optional options.
-  Future<StripeApiPrice> createPrice(StripeApiPriceOptions options) async {
+  Future<StripeApiPrice> createPriceOld(
+      StripeApiPriceOptionsOld options) async {
     var uri = _uri('prices');
 
     var bodyFields = <String, String>{
@@ -158,6 +159,15 @@ class StripeApi {
     }
     bodyFields.addMetadata(options.metadata);
 
+    // devPrint('${jsonPretty(bodyFields)}');
+    return _send<StripeApiPrice>(uri, bodyFields);
+  }
+
+  /// Create a payment link from a give price.
+  /// https://stripe.com/docs/api/prices/create
+  Future<StripeApiPrice> createPrice(StripeApiPriceCreate options) async {
+    var uri = _uri('prices');
+    var bodyFields = options.toStripeApiBodyFields();
     return _send<StripeApiPrice>(uri, bodyFields);
   }
 

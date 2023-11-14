@@ -1,4 +1,5 @@
 import 'package:cv/cv.dart';
+import 'package:tekartik_stripe_api/src/price_options.dart';
 
 //
 //   "id": "plink_1O9kTkJarQTbINzHWrS3TPl7",
@@ -64,8 +65,10 @@ import 'package:cv/cv.dart';
 class StripeApiPaymentLink extends CvModelBase {
   final id = CvField<String>('id');
   final url = CvField<String>('url');
+  final metadata = CvField<Model>('metadata');
+  final recurring = CvModelField<StringApiPriceRecurring>('recurring');
   @override
-  List<CvField<Object?>> get fields => [id, url];
+  List<CvField<Object?>> get fields => [id, url, metadata];
 }
 
 /// https://stripe.com/docs/payment-links/customer-info

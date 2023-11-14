@@ -5,6 +5,8 @@ import 'package:tekartik_stripe_api/src/price_model.dart';
 import 'package:tekartik_stripe_api/src/product_model.dart';
 import 'package:tekartik_stripe_api/src/stripe_api.dart';
 
+import 'price_options.dart';
+
 var _priceModelInitialized = false;
 void initStripeApiModels() {
   if (!_priceModelInitialized) {
@@ -15,9 +17,15 @@ void initStripeApiModels() {
     cvAddConstructor(StripeApiPaymentLinkCreate.new);
     cvAddConstructor(StripeApiPaymentLinkLineItem.new);
     cvAddConstructor(StripeApiPaymentLinkSubscriptionData.new);
+    cvAddConstructor(StripeApiPriceCreate.new);
+    cvAddConstructor(StringApiPriceRecurring.new);
   }
 }
 
+mixin StripeApiMetadataMixin implements CvModel {
+  final metadata = CvField<Model>('metadata');
+  List<CvField<Object?>> get metadataMixinFields => [metadata];
+}
 void bodyFieldsAddValue(
     StripeApiBodyFields bodyFields, String key, Object? value) {
   if (value is Iterable) {

@@ -1,4 +1,7 @@
 import 'package:cv/cv.dart';
+import 'package:tekartik_stripe_api/src/price_options.dart';
+
+import 'stripe_models.dart';
 
 // {
 //   "id": "price_1NzKqcJarQTbINzH3ONh99fm",
@@ -21,8 +24,11 @@ import 'package:cv/cv.dart';
 //   "unit_amount": 987,
 //   "unit_amount_decimal": "987"
 // }
-class StripeApiPrice extends CvModelBase {
+class StripeApiPrice extends CvModelBase
+    with StripeApiPriceMixin, StripeApiMetadataMixin {
   final id = CvField<String>('id');
+
   @override
-  List<CvField<Object?>> get fields => [id];
+  List<CvField<Object?>> get fields =>
+      [id, ...priceMixinFields, ...metadataMixinFields];
 }
