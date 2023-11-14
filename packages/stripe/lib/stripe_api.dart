@@ -9,22 +9,19 @@ export 'src/payment_link_model.dart'
     show StripeApiPaymentLink, StripeApiPaymentLinkExt;
 export 'src/payment_link_options.dart'
     show
-        StripeApiPaymentLinkPriceOptionsOld,
-        StripeApiPaymentLinkOptionsOld,
-        StripeApiPaymentLinkSubscriptionDataOld,
         StripeApiPaymentLinkCreate,
         StripeApiPaymentLinkLineItem,
         StripeApiPaymentLinkSubscriptionData;
 export 'src/price_model.dart' show StripeApiPrice;
 export 'src/price_options.dart'
-    show
-        StripeApiPriceOptionsOld,
-        StringApiPriceRecurringOld,
-        StringApiPriceRecurring,
-        StripeApiPriceCreate;
+    show StringApiPriceRecurring, StripeApiPriceCreate;
 export 'src/product_model.dart' show StripeApiProduct;
 export 'src/product_options.dart' show StripeApiProductCreate;
 export 'src/stripe_api.dart'
     show StripeApi, StripeApiCredentials, debugStripeApi;
 export 'src/stripe_models.dart'
-    show initStripeApiModels, CvModelStripeExt, StripeApiMetadataMixin;
+    show
+        initStripeApiModels,
+        CvModelStripeExt,
+        StripeApiMetadataMixin,
+        CvModelStripeMapExt;

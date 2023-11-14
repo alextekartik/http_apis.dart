@@ -1,5 +1,4 @@
 import 'package:cv/cv.dart';
-import 'package:tekartik_stripe_api/src/stripe_models.dart';
 import 'package:tekartik_stripe_api/stripe_api.dart';
 import 'package:test/test.dart';
 
@@ -105,6 +104,12 @@ void main() {
     expect(
         (newModel().cv<StripeApiProduct>()..fillModel(apiFillOptions)).toMap(),
         {'id': 'text_1'});
+  });
+  test('StripeApiProductCreate', () {
+    expect(
+        (newModel().cv<StripeApiProductCreate>()..fillModel(apiFillOptions))
+            .toMap(),
+        {'name': 'text_1', 'description': 'text_2'});
   });
   test('StripeApiPaymentLink', () {
     var paymentLink = StripeApiPaymentLink()..fillModel(apiFillOptions);

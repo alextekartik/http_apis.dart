@@ -6,6 +6,7 @@ import 'package:tekartik_stripe_api/src/product_model.dart';
 import 'package:tekartik_stripe_api/src/stripe_api.dart';
 
 import 'price_options.dart';
+import 'product_options.dart';
 
 var _priceModelInitialized = false;
 void initStripeApiModels() {
@@ -19,6 +20,7 @@ void initStripeApiModels() {
     cvAddConstructor(StripeApiPaymentLinkSubscriptionData.new);
     cvAddConstructor(StripeApiPriceCreate.new);
     cvAddConstructor(StringApiPriceRecurring.new);
+    cvAddConstructor(StripeApiProductCreate.new);
   }
 }
 

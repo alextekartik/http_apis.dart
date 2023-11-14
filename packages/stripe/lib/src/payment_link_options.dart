@@ -1,13 +1,5 @@
 import 'package:cv/cv.dart';
 
-import 'api_options.dart';
-
-class StripeApiPaymentLinkSubscriptionDataOld {
-  final String? description;
-
-  StripeApiPaymentLinkSubscriptionDataOld({required this.description});
-}
-
 class StripeApiPaymentLinkSubscriptionData extends CvModelBase {
   final description = CvField<String>('description');
 
@@ -27,29 +19,6 @@ class StripeApiPaymentLinkLineItem extends CvModelBase {
 
   @override
   List<CvField<Object?>> get fields => [priceId, quantity];
-}
-
-class StripeApiPaymentLinkPriceOptionsOld {
-  final String priceId;
-
-  /// Default to 1
-  final int? quantity;
-
-  StripeApiPaymentLinkPriceOptionsOld({
-    required this.priceId,
-    this.quantity,
-  });
-}
-
-class StripeApiPaymentLinkOptionsOld {
-  final List<StripeApiPaymentLinkPriceOptionsOld> prices;
-  final StripeApiMetadata? metadata;
-  final StripeApiPaymentLinkSubscriptionDataOld? subscriptionData;
-  StripeApiPaymentLinkOptionsOld({
-    required this.prices,
-    this.metadata,
-    this.subscriptionData,
-  });
 }
 
 class StripeApiPaymentLinkCreate extends CvModelBase {

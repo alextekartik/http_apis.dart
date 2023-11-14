@@ -8,7 +8,6 @@ import 'package:tekartik_common_utils/common_utils_import.dart';
 import 'package:tekartik_http/basic_auth_client.dart';
 import 'package:tekartik_http/http_client.dart';
 import 'package:tekartik_stripe_api/src/api_options.dart';
-import 'package:tekartik_stripe_api/src/format.dart';
 import 'package:tekartik_stripe_api/src/payment_link_options.dart';
 import 'package:tekartik_stripe_api/src/price_model.dart';
 import 'package:tekartik_stripe_api/src/price_options.dart';
@@ -106,27 +105,6 @@ class StripeApi {
 
   /// Create a payment link from a give price.
   /// https://stripe.com/docs/api/payment_links/payment_links/create
-  Future<StripeApiPaymentLink> createPaymentLinkOld(
-      StripeApiPaymentLinkOptionsOld options) async {
-    var uri = _uri('payment_links');
-    var bodyFields = newStripeApiBodyFields();
-    for (var (index, price) in options.prices.indexed) {
-      bodyFields['line_items[$index][price]'] = price.priceId;
-      bodyFields['line_items[$index][quantity]'] = '${price.quantity ?? 1}';
-    }
-    var subscriptData = options.subscriptionData;
-    if (subscriptData?.description != null) {
-      bodyFields['subscription_data[description]'] =
-          subscriptData!.description!;
-    }
-    bodyFields.addMetadata(options.metadata);
-    print(jsonPretty(bodyFields));
-    //throw Exception();
-    return _send<StripeApiPaymentLink>(uri, bodyFields);
-  }
-
-  /// Create a payment link from a give price.
-  /// https://stripe.com/docs/api/payment_links/payment_links/create
   Future<StripeApiPaymentLink> createPaymentLink(
       StripeApiPaymentLinkCreate options) async {
     var uri = _uri('payment_links');
@@ -138,29 +116,6 @@ class StripeApi {
   Future<StripeApiPaymentLink> getPaymentLink(String paymentLinkId) async {
     var uri = _uri('payment_links/$paymentLinkId');
     return _get<StripeApiPaymentLink>(uri);
-  }
-
-  /// Create a price with optional options.
-  Future<StripeApiPrice> createPriceOld(
-      StripeApiPriceOptionsOld options) async {
-    var uri = _uri('prices');
-
-    var bodyFields = <String, String>{
-      'unit_amount': formatAmount(options.amount),
-      'currency': options.currency,
-      'product': options.productId,
-    };
-    var recurring = options.recurring;
-    if (recurring != null) {
-      bodyFields.addAll({
-        'recurring[interval]': recurring.interval,
-        'recurring[interval_count]': recurring.intervalCount.toString(),
-      });
-    }
-    bodyFields.addMetadata(options.metadata);
-
-    // devPrint('${jsonPretty(bodyFields)}');
-    return _send<StripeApiPrice>(uri, bodyFields);
   }
 
   /// Create a payment link from a give price.

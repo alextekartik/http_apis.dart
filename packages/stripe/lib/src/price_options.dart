@@ -1,6 +1,5 @@
 import 'package:cv/cv.dart';
 
-import 'api_options.dart';
 import 'stripe_models.dart';
 
 mixin StripeApiPriceMixin {
@@ -27,55 +26,6 @@ class StripeApiPriceCreate extends CvModelBase
   @override
   List<CvField<Object?>> get fields =>
       [...priceMixinFields, ...metadataMixinFields];
-  /*
-  final double amount;
-  final String currency;
-  final StringApiPriceRecurringOld? recurring;
-  final StripeApiMetadata? metadata;
-
-  /// A brief description of the price, hidden from customers.
-  final String? nickname;
-
-  StripeApiPriceOptionsOld(
-      {required this.amount,
-        required this.currency,
-        required this.productId,
-        this.nickname,
-        this.recurring,
-        this.metadata});
-
-   */
-}
-
-@Deprecated('old')
-class StripeApiPriceOptionsOld {
-  final String productId;
-  final double amount;
-  final String currency;
-  final StringApiPriceRecurringOld? recurring;
-  final StripeApiMetadata? metadata;
-
-  /// A brief description of the price, hidden from customers.
-  final String? nickname;
-
-  StripeApiPriceOptionsOld(
-      {required this.amount,
-      required this.currency,
-      required this.productId,
-      this.nickname,
-      this.recurring,
-      this.metadata});
-}
-
-/// Optional recurring.
-/// 'month', 3 means every 3 months.
-@Deprecated('old')
-class StringApiPriceRecurringOld {
-  final String interval;
-  final int intervalCount;
-
-  StringApiPriceRecurringOld(
-      {required this.interval, required this.intervalCount});
 }
 
 /// Optional recurring.
