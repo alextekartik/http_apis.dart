@@ -21,6 +21,7 @@ class StripeApiPaymentLinkLineItem extends CvModelBase {
   List<CvField<Object?>> get fields => [priceId, quantity];
 }
 
+/// https://stripe.com/docs/api/payment_links/payment_links/create
 class StripeApiPaymentLinkCreate extends CvModelBase {
   final lineItems =
       CvModelListField<StripeApiPaymentLinkLineItem>('line_items');

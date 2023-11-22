@@ -52,16 +52,22 @@ extension StripeApiBodyFieldsExt on StripeApiBodyFields {
 class StripeApi {
   final StripeApiCredentials credentials;
 
-  StripeApi({required this.credentials}) {
+  /// Optional base client
+  final Client? baseClient;
+  final Uri? baseUri;
+
+  StripeApi({required this.credentials, this.baseClient, this.baseUri}) {
     initStripeApiModels();
   }
 
-  Client get _client => _clientOrNull ??=
-      BasicAuthClient(credentials.secretKey ?? credentials.publishableKey!, '');
+  Client get _client => _clientOrNull ??= BasicAuthClient(
+      credentials.secretKey ?? credentials.publishableKey!, '',
+      inner: baseClient);
   Client? _clientOrNull;
 
+  Uri get _stripeApiUrlBase => baseUri ?? stripeApiUrlBase;
   Uri _uri(String path) =>
-      stripeApiUrlBase.replace(path: url.join(stripeApiUrlBase.path, path));
+      _stripeApiUrlBase.replace(path: url.join(_stripeApiUrlBase.path, path));
 
   Future<T> _send<T extends CvModel>(
       Uri uri, Map<String, String> bodyFields) async {
