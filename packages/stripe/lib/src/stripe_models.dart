@@ -21,6 +21,8 @@ void initStripeApiModels() {
     cvAddConstructor(StripeApiPriceCreate.new);
     cvAddConstructor(StringApiPriceRecurring.new);
     cvAddConstructor(StripeApiProductCreate.new);
+    cvAddConstructor(StripeApiProductList.new);
+    cvAddConstructor(StripeApiProductListOptions.new);
   }
 }
 
@@ -63,10 +65,26 @@ extension CvModelStripeMapExt on Map {
     }
     return bodyFields;
   }
+
+  Map<String, String> toStripeApiParam() {
+    var param = <String, String>{};
+    for (var entry in entries) {
+      var fieldKey = entry.key;
+      var value = entry.value;
+      if (fieldKey is String && value != null) {
+        param[fieldKey] = value.toString();
+      }
+    }
+    return param;
+  }
 }
 
 extension CvModelStripeExt on CvModel {
   StripeApiBodyFields toStripeApiBodyFields() {
     return toMap().toStripeApiBodyFields();
+  }
+
+  Map<String, String> toStripeApiParam() {
+    return toMap().toStripeApiParam();
   }
 }

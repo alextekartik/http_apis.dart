@@ -31,6 +31,10 @@ class StripeApiCredentials {
   StripeApiCredentials({this.secretKey, this.publishableKey}) {
     assert(secretKey != null || publishableKey != null);
   }
+  StripeApiCredentials withoutSecretKey() =>
+      StripeApiCredentials(publishableKey: publishableKey);
+  StripeApiCredentials withoutPublishableKey() =>
+      StripeApiCredentials(secretKey: secretKey);
 }
 
 typedef StripeApiBodyFields = Map<String, String>;
@@ -151,6 +155,15 @@ class StripeApi {
     var uri = _uri('products/$productId');
 
     return _get<StripeApiProduct>(uri);
+  }
+
+  /// List products
+  Future<StripeApiProductList> listProducts(
+      StripeApiProductListOptions options) async {
+    var uri = _uri('products');
+
+    return _get<StripeApiProductList>(
+        uri.replace(queryParameters: options.toStripeApiParam()));
   }
 
   Future<void> close() async {

@@ -23,6 +23,33 @@ import 'package:cv/cv.dart';
 // }
 class StripeApiProduct extends CvModelBase {
   final id = CvField<String>('id');
+  final name = CvField<String>('name');
+  final description = CvField<String>('description');
   @override
-  List<CvField<Object?>> get fields => [id];
+  List<CvField<Object?>> get fields => [id, name, description];
+}
+
+/// https://stripe.com/docs/api/products/create
+class StripeApiProductListOptions extends CvModelBase {
+  /// limit (optional)
+  /// A limit on the number of objects to be returned. Limit can range between
+  /// 1 and 100, and the default is 10.
+  final limit = CvField<int>('limit');
+
+  /// starting_after (optional)
+  /// A cursor for use in pagination. starting_after is an object ID that
+  /// defines your place in the list. For instance, if you make a list request
+  /// and receive 100 objects, ending with obj_foo, your subsequent call can
+  /// include starting_after=obj_foo in order to fetch the next page of the list.
+  final startingAfter = CvField<String>('starting_after');
+
+  @override
+  List<CvField<Object?>> get fields => [limit, startingAfter];
+}
+
+class StripeApiProductList extends CvModelBase {
+  final hasMore = CvField<bool>('has_more');
+  final data = CvModelListField<StripeApiProduct>('data');
+  @override
+  List<CvField<Object?>> get fields => [data, hasMore];
 }
