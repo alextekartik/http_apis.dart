@@ -11,10 +11,11 @@ export 'src/payment_link_options.dart'
     show
         StripeApiPaymentLinkCreate,
         StripeApiPaymentLinkLineItem,
-        StripeApiPaymentLinkSubscriptionData;
+        StripeApiPaymentLinkSubscriptionData,
+        StripeApiPaymentLinkUpdate;
 export 'src/price_model.dart' show StripeApiPrice;
 export 'src/price_options.dart'
-    show StringApiPriceRecurring, StripeApiPriceCreate;
+    show StringApiPriceRecurring, StripeApiPriceCreate, StripeApiPriceUpdate;
 export 'src/product_model.dart'
     show StripeApiProduct, StripeApiProductListOptions, StripeApiProductList;
 export 'src/product_options.dart' show StripeApiProductCreate;

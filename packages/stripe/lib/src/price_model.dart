@@ -25,10 +25,17 @@ import 'stripe_models.dart';
 //   "unit_amount_decimal": "987"
 // }
 class StripeApiPrice extends CvModelBase
-    with StripeApiPriceMixin, StripeApiMetadataMixin {
+    with
+        StripeApiPriceCreateUpdateMixin,
+        StripeApiPriceMixin,
+        StripeApiMetadataMixin {
   final id = CvField<String>('id');
 
   @override
-  List<CvField<Object?>> get fields =>
-      [id, ...priceMixinFields, ...metadataMixinFields];
+  List<CvField<Object?>> get fields => [
+        id,
+        ...createUpdatePriceMixinFields,
+        ...priceMixinFields,
+        ...metadataMixinFields
+      ];
 }

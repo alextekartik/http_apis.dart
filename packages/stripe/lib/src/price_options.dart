@@ -2,10 +2,19 @@ import 'package:cv/cv.dart';
 
 import 'stripe_models.dart';
 
+mixin StripeApiPriceCreateUpdateMixin {
+  final nickname = CvField<String>('nickname');
+  final active = CvField<bool>('active');
+
+  List<CvField<Object?>> get createUpdatePriceMixinFields => [
+        nickname,
+        active,
+      ];
+}
+
 mixin StripeApiPriceMixin {
   final productId = CvField<String>('product');
   final currency = CvField<String>('currency');
-  final nickname = CvField<String>('nickname');
 
   /// cents
   final amount = CvField<int>('unit_amount');
@@ -13,7 +22,6 @@ mixin StripeApiPriceMixin {
 
   List<CvField<Object?>> get priceMixinFields => [
         productId,
-        nickname,
         currency,
         amount,
         recurring,
@@ -22,10 +30,24 @@ mixin StripeApiPriceMixin {
 
 /// https://stripe.com/docs/api/prices/create
 class StripeApiPriceCreate extends CvModelBase
-    with StripeApiPriceMixin, StripeApiMetadataMixin {
+    with
+        StripeApiPriceCreateUpdateMixin,
+        StripeApiPriceMixin,
+        StripeApiMetadataMixin {
+  @override
+  List<CvField<Object?>> get fields => [
+        ...createUpdatePriceMixinFields,
+        ...priceMixinFields,
+        ...metadataMixinFields
+      ];
+}
+
+/// https://stripe.com/docs/api/prices/update
+class StripeApiPriceUpdate extends CvModelBase
+    with StripeApiPriceCreateUpdateMixin, StripeApiMetadataMixin {
   @override
   List<CvField<Object?>> get fields =>
-      [...priceMixinFields, ...metadataMixinFields];
+      [...createUpdatePriceMixinFields, ...metadataMixinFields];
 }
 
 /// Optional recurring.

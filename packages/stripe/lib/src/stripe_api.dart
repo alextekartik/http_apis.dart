@@ -122,6 +122,14 @@ class StripeApi {
     return _send<StripeApiPaymentLink>(uri, bodyFields);
   }
 
+  /// https://stripe.com/docs/api/payment_links/payment_links/update
+  Future<StripeApiPaymentLink> updatePaymentLink(
+      String paymentLinkId, StripeApiPaymentLinkUpdate options) async {
+    var uri = _uri('payment_links/$paymentLinkId');
+    var bodyFields = options.toStripeApiBodyFields();
+    return _send<StripeApiPaymentLink>(uri, bodyFields);
+  }
+
   /// Get a payment link.
   Future<StripeApiPaymentLink> getPaymentLink(String paymentLinkId) async {
     var uri = _uri('payment_links/$paymentLinkId');
@@ -132,6 +140,15 @@ class StripeApi {
   /// https://stripe.com/docs/api/prices/create
   Future<StripeApiPrice> createPrice(StripeApiPriceCreate options) async {
     var uri = _uri('prices');
+    var bodyFields = options.toStripeApiBodyFields();
+    return _send<StripeApiPrice>(uri, bodyFields);
+  }
+
+  /// Create a payment link from a give price.
+  /// https://stripe.com/docs/api/prices/create
+  Future<StripeApiPrice> updatePrice(
+      String priceId, StripeApiPriceUpdate options) async {
+    var uri = _uri('prices/$priceId');
     var bodyFields = options.toStripeApiBodyFields();
     return _send<StripeApiPrice>(uri, bodyFields);
   }

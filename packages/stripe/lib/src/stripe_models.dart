@@ -23,6 +23,8 @@ void initStripeApiModels() {
     cvAddConstructor(StripeApiProductCreate.new);
     cvAddConstructor(StripeApiProductList.new);
     cvAddConstructor(StripeApiProductListOptions.new);
+    cvAddConstructors(
+        [StripeApiPaymentLinkUpdate.new, StripeApiPriceUpdate.new]);
   }
 }
 

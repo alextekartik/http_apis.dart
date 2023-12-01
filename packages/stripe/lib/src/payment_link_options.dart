@@ -22,7 +22,13 @@ class StripeApiPaymentLinkLineItem extends CvModelBase {
 }
 
 /// https://stripe.com/docs/api/payment_links/payment_links/create
-class StripeApiPaymentLinkCreate extends CvModelBase {
+class StripeApiPaymentLinkCreate extends CvModelBase
+    with StripeApiPaymentLinkCreateUpdateMixin {
+  @override
+  List<CvField<Object?>> get fields => [...createUpdateMixinFields];
+}
+
+mixin StripeApiPaymentLinkCreateUpdateMixin on CvModelBase {
   final lineItems =
       CvModelListField<StripeApiPaymentLinkLineItem>('line_items');
   final metadata = CvField<Model>('metadata');
@@ -30,7 +36,15 @@ class StripeApiPaymentLinkCreate extends CvModelBase {
   /// Optional only valid if one line item is a recurring subscription.
   final subscriptionData =
       CvModelField<StripeApiPaymentLinkSubscriptionData>('subscription_data');
+  final active = CvField<bool>('active');
 
+  List<CvField<Object?>> get createUpdateMixinFields =>
+      [lineItems, metadata, subscriptionData];
+}
+
+/// https://stripe.com/docs/api/payment_links/payment_links/create
+class StripeApiPaymentLinkUpdate extends CvModelBase
+    with StripeApiPaymentLinkCreateUpdateMixin {
   @override
-  List<CvField<Object?>> get fields => [lineItems, metadata, subscriptionData];
+  List<CvField<Object?>> get fields => [...createUpdateMixinFields];
 }

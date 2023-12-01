@@ -1,6 +1,8 @@
 import 'package:cv/cv.dart';
 import 'package:tekartik_stripe_api/src/price_options.dart';
 
+import 'payment_link_options.dart';
+
 //
 //   "id": "plink_1O9kTkJarQTbINzHWrS3TPl7",
 //   "object": "payment_link",
@@ -62,13 +64,15 @@ import 'package:tekartik_stripe_api/src/price_options.dart';
 //   "transfer_data": null,
 //   "url": "https://buy.stripe.com/test_5kA3f43TRfsT8qA6ou"
 // }
-class StripeApiPaymentLink extends CvModelBase {
+class StripeApiPaymentLink extends CvModelBase
+    with StripeApiPaymentLinkCreateUpdateMixin {
   final id = CvField<String>('id');
   final url = CvField<String>('url');
-  final metadata = CvField<Model>('metadata');
+
   final recurring = CvModelField<StringApiPriceRecurring>('recurring');
+
   @override
-  List<CvField<Object?>> get fields => [id, url, metadata];
+  List<CvField<Object?>> get fields => [id, url, ...createUpdateMixinFields];
 }
 
 /// https://stripe.com/docs/payment-links/customer-info

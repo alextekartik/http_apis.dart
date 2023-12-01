@@ -38,12 +38,13 @@ void main() {
         (newModel().cv<StripeApiPriceCreate>()..fillModel(apiFillOptions))
             .toMap(),
         {
-          'product': 'text_1',
-          'nickname': 'text_2',
-          'currency': 'text_3',
-          'unit_amount': 4,
-          'recurring': {'interval': 'text_5', 'interval_count': 6},
-          'metadata': {'field_1': 7}
+          'nickname': 'text_1',
+          'active': true,
+          'product': 'text_3',
+          'currency': 'text_4',
+          'unit_amount': 5,
+          'recurring': {'interval': 'text_6', 'interval_count': 7},
+          'metadata': {'field_1': 8}
         });
 
     map = {
@@ -55,12 +56,13 @@ void main() {
     };
     expect((StripeApiPrice()..fillModel(apiFillOptions)).toMap(), {
       'id': 'text_1',
-      'product': 'text_2',
-      'nickname': 'text_3',
-      'currency': 'text_4',
-      'unit_amount': 5,
-      'recurring': {'interval': 'text_6', 'interval_count': 7},
-      'metadata': {'field_1': 8}
+      'nickname': 'text_2',
+      'active': false,
+      'product': 'text_4',
+      'currency': 'text_5',
+      'unit_amount': 6,
+      'recurring': {'interval': 'text_7', 'interval_count': 8},
+      'metadata': {'field_1': 9}
     });
     map = {
       'id': 'price_1OCJgVJarQTbINzHAKSI2QsE',
@@ -92,18 +94,26 @@ void main() {
     var price = map.cv<StripeApiPrice>();
     expect(price.toMap(), {
       'id': 'price_1OCJgVJarQTbINzHAKSI2QsE',
-      'product': 'prod_OmtgJbSbudZ2hT',
       'nickname': null,
+      'active': true,
+      'product': 'prod_OmtgJbSbudZ2hT',
       'currency': 'eur',
       'unit_amount': 1000,
       'recurring': {'interval': 'day', 'interval_count': 1},
       'metadata': {'meta_1': 'Test meta value', 'meta_2': 'Test meta value 2'}
     });
+    expect(
+        (cvNewModel<StripeApiPriceUpdate>()..fillModel(cvFillOptions1)).toMap(),
+        {
+          'nickname': 'text_1',
+          'active': true,
+          'metadata': {'field_1': 3}
+        });
   });
   test('StripeApiProduct', () {
     expect(
         (newModel().cv<StripeApiProduct>()..fillModel(apiFillOptions)).toMap(),
-        {'id': 'text_1'});
+        {'id': 'text_1', 'name': 'text_2', 'description': 'text_3'});
   });
   test('StripeApiProductCreate', () {
     expect(
@@ -116,7 +126,11 @@ void main() {
     expect(paymentLink.toMap(), {
       'id': 'text_1',
       'url': 'text_2',
-      'metadata': {'field_1': 3}
+      'line_items': [
+        {'price': 'text_3', 'quantity': 4}
+      ],
+      'metadata': {'field_1': 5},
+      'subscription_data': {'description': 'text_6'}
     });
     expect(
         paymentLink.uriWith(email: 'my_email', locale: 'my_locale').toString(),
@@ -155,10 +169,24 @@ void main() {
       'metadata': {'field_1': 3},
       'subscription_data': {'description': 'text_4'}
     });
+    expect(
+        (cvNewModel<StripeApiPaymentLinkUpdate>()..fillModel(apiFillOptions))
+            .toMap(),
+        {
+          'line_items': [
+            {'price': 'text_1', 'quantity': 2}
+          ],
+          'metadata': {'field_1': 3},
+          'subscription_data': {'description': 'text_4'}
+        });
     expect((StripeApiPaymentLink()..fillModel(apiFillOptions)).toMap(), {
       'id': 'text_1',
       'url': 'text_2',
-      'metadata': {'field_1': 3}
+      'line_items': [
+        {'price': 'text_3', 'quantity': 4}
+      ],
+      'metadata': {'field_1': 5},
+      'subscription_data': {'description': 'text_6'}
     });
   });
   test('create_product', () {
