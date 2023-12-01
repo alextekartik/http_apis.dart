@@ -39,7 +39,7 @@ mixin StripeApiPaymentLinkCreateUpdateMixin on CvModelBase {
   final active = CvField<bool>('active');
 
   List<CvField<Object?>> get createUpdateMixinFields =>
-      [lineItems, metadata, subscriptionData];
+      [lineItems, metadata, subscriptionData, active];
 }
 
 /// https://stripe.com/docs/api/payment_links/payment_links/create

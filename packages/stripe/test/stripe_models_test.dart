@@ -130,7 +130,8 @@ void main() {
         {'price': 'text_3', 'quantity': 4}
       ],
       'metadata': {'field_1': 5},
-      'subscription_data': {'description': 'text_6'}
+      'subscription_data': {'description': 'text_6'},
+      'active': false
     });
     expect(
         paymentLink.uriWith(email: 'my_email', locale: 'my_locale').toString(),
@@ -167,7 +168,8 @@ void main() {
         {'price': 'text_1', 'quantity': 2}
       ],
       'metadata': {'field_1': 3},
-      'subscription_data': {'description': 'text_4'}
+      'subscription_data': {'description': 'text_4'},
+      'active': false
     });
     expect(
         (cvNewModel<StripeApiPaymentLinkUpdate>()..fillModel(apiFillOptions))
@@ -177,7 +179,8 @@ void main() {
             {'price': 'text_1', 'quantity': 2}
           ],
           'metadata': {'field_1': 3},
-          'subscription_data': {'description': 'text_4'}
+          'subscription_data': {'description': 'text_4'},
+          'active': false
         });
     expect((StripeApiPaymentLink()..fillModel(apiFillOptions)).toMap(), {
       'id': 'text_1',
@@ -186,7 +189,8 @@ void main() {
         {'price': 'text_3', 'quantity': 4}
       ],
       'metadata': {'field_1': 5},
-      'subscription_data': {'description': 'text_6'}
+      'subscription_data': {'description': 'text_6'},
+      'active': false
     });
   });
   test('create_product', () {
