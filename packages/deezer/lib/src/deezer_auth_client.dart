@@ -10,7 +10,11 @@ class DeezerAuthClient extends http.BaseClient {
   final DeezerApi api;
   final _client = http.Client();
   String? authToken;
-  DeezerAuthClient(this.api);
+  DeezerAuthClient(this.api) {
+    // assert(api.code != null || api.accessToken != null);
+    // Use access token if available
+    authToken = api.accessToken;
+  }
   @override
   Future<http.StreamedResponse> send(http.BaseRequest request) async {
     late String body;
