@@ -14,6 +14,8 @@ extension UriJsonp on Uri {
 }
 
 class DeezerApi {
+  static const userIdMe = 'me';
+
   final String? code;
   final String? accessToken;
   final DeezerApiOptions? options;
@@ -39,10 +41,16 @@ class DeezerApi {
   }
 
   final _baseUrl = Uri.parse('https://api.deezer.com/2.0');
-  Future<DeezerUser> getMe() async {
-    var uri = Uri.parse('https://api.deezer.com/user/me');
+
+  /// Get current user, need access token
+  Future<DeezerUser> getMe() {
+    return getUser(userIdMe);
+  }
+
+  /// Need access token.
+  Future<DeezerUser> getUser(String userId) async {
+    var uri = _withAppendedPath('user/$userId');
     var body = await _authClient.read(uri);
-    // print(body);
     return body.cv<DeezerUser>();
   }
 
@@ -53,6 +61,17 @@ class DeezerApi {
 
   Future<DeezerArtist> getArtist(String id) async {
     return (await getArtistRaw(id)).cv<DeezerArtist>();
+  }
+
+  Future<Object> _readAny(Uri uri) async {
+    if (useJsonp) {
+      // Unauth only
+      uri = uri.withJsonp();
+      return await jsonpRequest(uri);
+    } else {
+      var body = await _authClient.read(uri);
+      return jsonDecode(body) as Object;
+    }
   }
 
   Future<Model> _readMap(Uri uri) async {
@@ -92,6 +111,23 @@ class DeezerApi {
 
   Future<DeezerAlbum> getAlbum(String id) async {
     return (await getAlbumRaw(id)).cv<DeezerAlbum>();
+  }
+
+  /// Need access token? tracks not available here.
+  Future<List<DeezerPlaylist>> getUserPlaylists(String userId) async {
+    var uri = _withAppendedPath('user/$userId/playlists');
+    var result = await _readAny(uri);
+    if (result is Map && result.containsKey('data')) {
+      var data = result['data'] as List;
+      return data.map((e) => e as Map).toList().cv<DeezerPlaylist>();
+    } else if (result is List) {
+      return result.cast<Map>().cv<DeezerPlaylist>();
+    }
+    throw UnsupportedError('invalid result ${result.runtimeType} $result');
+  }
+
+  Future<List<DeezerPlaylist>> getMyPlaylists() {
+    return getUserPlaylists(userIdMe);
   }
 
   Future<Model> getAlbumRaw(String id) async {
