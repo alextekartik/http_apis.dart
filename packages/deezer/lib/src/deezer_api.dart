@@ -5,7 +5,7 @@ import 'package:tekartik_deezer_api/src/platform/jsonp.dart';
 
 import 'deezer_auth_client.dart';
 
-var debugDeezerApi = false;
+var debugDeezerApi = false; // devWarning(true);
 
 extension UriJsonp on Uri {
   Uri withJsonp() => replace(
@@ -50,7 +50,7 @@ class DeezerApi {
   /// Need access token.
   Future<DeezerUser> getUser(String userId) async {
     var uri = _withAppendedPath('user/$userId');
-    var body = await _authClient.read(uri);
+    var body = await _authClient.readString(uri);
     return body.cv<DeezerUser>();
   }
 
@@ -63,14 +63,28 @@ class DeezerApi {
     return (await getArtistRaw(id)).cv<DeezerArtist>();
   }
 
+  Future<Object> readAny(Uri uri) async {
+    return await _readAny(uri);
+  }
+
   Future<Object> _readAny(Uri uri) async {
-    if (useJsonp) {
-      // Unauth only
-      uri = uri.withJsonp();
-      return await jsonpRequest(uri);
-    } else {
-      var body = await _authClient.read(uri);
-      return jsonDecode(body) as Object;
+    if (debugDeezerApi) {
+      print('uri: $uri');
+    }
+    try {
+      if (useJsonp) {
+        // Unauth only
+        uri = uri.withJsonp();
+        return await jsonpRequest(uri);
+      } else {
+        var body = await _authClient.read(uri);
+        return jsonDecode(body) as Object;
+      }
+    } catch (e) {
+      if (debugDeezerApi) {
+        print('error: $e for $uri');
+      }
+      rethrow;
     }
   }
 
@@ -82,6 +96,27 @@ class DeezerApi {
     } else {
       var body = await _authClient.read(uri);
       return jsonDecode(body) as Model;
+    }
+  }
+
+  Future<String> readString(Uri uri) async {
+    if (debugDeezerApi) {
+      print('dzuri: $uri');
+    }
+    if (useJsonp) {
+      // Unauth only
+      uri = uri.withJsonp();
+      var result = await jsonpRequest(uri);
+      if (debugDeezerApi) {
+        print('dzresult ${result.runtimeType} $result');
+      }
+      if (result is Map) {
+        return jsonEncode(result);
+      }
+      return result.toString();
+    } else {
+      var body = await _authClient.read(uri);
+      return body;
     }
   }
 

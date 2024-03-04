@@ -38,6 +38,9 @@ class DeezerAuthClient extends http.BaseClient {
       if (debugDeezerApi) {
         print('[DQury] $originalRequestUrl');
       }
+
+      // var body = await api.readAny(url);
+      //print('[DResp] ${body.runtimeType} $body');
       /*
       if (debugWebServices) {
         logD('${newRequest.method} ${newRequest.url} ${newRequest.headers}');
@@ -115,13 +118,22 @@ class DeezerAuthClient extends http.BaseClient {
     if (debugDeezerApi) {
       print('[DQury access_token] $uri');
     }
-    var response = await http.get(uri);
-    // access_token=frZ0joLUqBHyl9rMTReymQrh95cOxZiz30jAI7DaoOs6vANJgsw&expires=3600
-    //print(response.body);
-    //print(response.headers);
-    var body = response.body.trim();
-    if (debugDeezerApi) {
-      print('[DResp access token ${response.statusCode}] $body');
+    late String body;
+    if (true) {
+      var response = await http.get(uri);
+      // access_token=frZ0joLUqBHyl9rMTReymQrh95cOxZiz30jAI7DaoOs6vANJgsw&expires=3600
+      //print(response.body);
+      //print(response.headers);
+      body = response.body.trim();
+      if (debugDeezerApi) {
+        print('[DResp access token ${response.statusCode}] $body');
+      }
+      // ignore: dead_code
+    } else {
+      body = await api.readString(uri);
+      if (debugDeezerApi) {
+        print('[DResp access token $body');
+      }
     }
     // print(body);
     if (body.startsWith('access_token')) {
@@ -130,5 +142,12 @@ class DeezerAuthClient extends http.BaseClient {
       return accessToken;
     }
     return null;
+  }
+
+  Future<String> readString(Uri uri) {
+    uri = uri.replace(
+        queryParameters: Map<String, String>.from(uri.queryParameters)
+          ..['access_token'] = authToken!);
+    return api.readString(uri);
   }
 }

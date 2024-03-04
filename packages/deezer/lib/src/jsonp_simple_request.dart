@@ -6,6 +6,8 @@ import 'package:tekartik_common_utils/common_utils_import.dart';
 import 'http_simple_request.dart';
 import 'unsafe_api.dart';
 
+var debugJsonp = false; // devWarning(true);
+
 /// Executes a JSONP request.
 ///
 /// Returns a [Future] with the result of the request.
@@ -36,6 +38,9 @@ class JsonpRequest implements HttpSimpleRequest {
 
   void _listenForCallback() {
     _callbackSubscription = window.onMessage.listen((MessageEvent event) {
+      if (debugJsonp) {
+        print('event: ${event.data}');
+      }
       var data = event.data;
       if (data is String) {
         if (data.startsWith('{')) {
@@ -71,6 +76,9 @@ class JsonpRequest implements HttpSimpleRequest {
   }
 
   void _doRequest(Uri uri) {
+    if (debugJsonp) {
+      print('jsonpRequest: $uri');
+    }
     var script = _jsonpScript = ScriptElement()..safeSrc = uri.toString();
     document.body!.children.add(script);
     //script.remove();
