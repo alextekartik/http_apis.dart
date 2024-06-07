@@ -1,3 +1,5 @@
+// ignore_for_file: avoid_print
+
 import 'package:tekartik_deezer_api/deezer_api.dart';
 import 'package:tekartik_deezer_api/src/import.dart';
 

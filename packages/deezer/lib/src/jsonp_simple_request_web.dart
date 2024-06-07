@@ -1,10 +1,12 @@
-import 'dart:html';
+library;
+
+import 'dart:js_interop' as js;
 
 // ignore: depend_on_referenced_packages
 import 'package:tekartik_common_utils/common_utils_import.dart';
+import 'package:web/web.dart' as web;
 
 import 'http_simple_request.dart';
-import 'unsafe_api.dart';
 
 var debugJsonp = false; // devWarning(true);
 
@@ -28,8 +30,8 @@ Future<Object> jsonpRequest(Uri uri, {String callbackParam = 'callback'}) =>
 class JsonpRequest implements HttpSimpleRequest {
   static int _requestCounter = 0;
   String? _callbackName;
-  ScriptElement? _callbackScript;
-  ScriptElement? _jsonpScript;
+  web.HTMLScriptElement? _callbackScript;
+  web.HTMLScriptElement? _jsonpScript;
   final String callbackParam;
   StreamSubscription? _callbackSubscription;
   Completer? _completer;
@@ -37,12 +39,15 @@ class JsonpRequest implements HttpSimpleRequest {
   JsonpRequest({this.callbackParam = 'callback'});
 
   void _listenForCallback() {
-    _callbackSubscription = window.onMessage.listen((MessageEvent event) {
+    _callbackSubscription = web.EventStreamProviders.messageEvent
+        .forTarget(web.window)
+        .listen((web.MessageEvent event) {
       if (debugJsonp) {
         print('event: ${event.data}');
       }
-      var data = event.data;
-      if (data is String) {
+      var rawData = event.data;
+      if (rawData.isA<js.JSString>()) {
+        var data = (rawData as js.JSString).toDart;
         if (data.startsWith('{')) {
           var result = parseJsonObject(data)!;
           // devPrint(result);
@@ -68,19 +73,22 @@ class JsonpRequest implements HttpSimpleRequest {
   }
 
   void _addCallbackScript() {
-    _callbackScript = ScriptElement()
+    _callbackScript = web.HTMLScriptElement()
       ..text = """function $_callbackName(value) {
       window.postMessage('{"callbackName":"$_callbackName","data":' + JSON.stringify(value) + '}', '*');
     }""";
-    document.body!.children.add(_callbackScript!);
+    if (debugJsonp) {
+      print('adding _callback: ${_callbackScript!.text}');
+    }
+    web.document.body!.appendChild(_callbackScript!);
   }
 
   void _doRequest(Uri uri) {
     if (debugJsonp) {
       print('jsonpRequest: $uri');
     }
-    var script = _jsonpScript = ScriptElement()..safeSrc = uri.toString();
-    document.body!.children.add(script);
+    var script = _jsonpScript = web.HTMLScriptElement()..src = uri.toString();
+    web.document.body!.appendChild(script);
     //script.remove();
     // devPrint(document.body!.innerHtml);
   }

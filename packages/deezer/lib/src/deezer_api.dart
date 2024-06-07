@@ -38,6 +38,10 @@ class DeezerApi {
       : useJsonp = useJsonp ?? needJsonp {
     // assert(code != null || accessToken != null);
     initDeezerCvBuilders();
+    if (debugDeezerApi) {
+      print(
+          'DeezerApi code: $code accessToken: $accessToken, useJsonp: ${this.useJsonp}');
+    }
   }
 
   final _baseUrl = Uri.parse('https://api.deezer.com/2.0');
