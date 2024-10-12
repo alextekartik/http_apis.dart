@@ -1,6 +1,5 @@
-// TODO: Put public facing types in this file.
-
 import 'package:cv/cv_json.dart';
+import 'package:http/http.dart';
 import 'package:path/path.dart';
 // ignore: depend_on_referenced_packages
 import 'package:tekartik_common_utils/common_utils_import.dart';
@@ -30,8 +29,10 @@ class StripeApiCredentials {
   StripeApiCredentials({this.secretKey, this.publishableKey}) {
     assert(secretKey != null || publishableKey != null);
   }
+
   StripeApiCredentials withoutSecretKey() =>
       StripeApiCredentials(publishableKey: publishableKey);
+
   StripeApiCredentials withoutPublishableKey() =>
       StripeApiCredentials(secretKey: secretKey);
 }
@@ -69,6 +70,7 @@ class StripeApi {
   Client? _clientOrNull;
 
   Uri get _stripeApiUrlBase => baseUri ?? stripeApiUrlBase;
+
   Uri _uri(String path) =>
       _stripeApiUrlBase.replace(path: url.join(_stripeApiUrlBase.path, path));
 
