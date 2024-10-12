@@ -1,5 +1,4 @@
 import 'package:cv/cv_json.dart';
-import 'package:http/http.dart';
 import 'package:tekartik_http/http_memory.dart';
 import 'package:tekartik_stripe_api/src/import.dart';
 import 'package:tekartik_stripe_api/stripe_api.dart';

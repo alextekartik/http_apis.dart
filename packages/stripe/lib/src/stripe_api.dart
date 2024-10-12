@@ -1,7 +1,6 @@
 // TODO: Put public facing types in this file.
 
 import 'package:cv/cv_json.dart';
-import 'package:http/http.dart';
 import 'package:path/path.dart';
 // ignore: depend_on_referenced_packages
 import 'package:tekartik_common_utils/common_utils_import.dart';

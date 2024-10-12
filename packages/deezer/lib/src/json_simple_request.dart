@@ -1,4 +1,3 @@
-import 'package:http/http.dart';
 import 'package:tekartik_app_http/app_http.dart';
 // ignore: depend_on_referenced_packages
 import 'package:tekartik_common_utils/common_utils_import.dart';
