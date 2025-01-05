@@ -3,9 +3,10 @@
 version: 2
 
 enable-beta-ecosystems: true
+
 updates:
   - package-ecosystem: "pub"
-    directory: "packages/mailjet"
+    directory: "."
     schedule:
       interval: "monthly"
   - package-ecosystem: "pub"
@@ -13,12 +14,14 @@ updates:
     schedule:
       interval: "monthly"
   - package-ecosystem: "pub"
-    directory: "packages/strip"
+    directory: "packages/mailjet"
+    schedule:
+      interval: "monthly"
+  - package-ecosystem: "pub"
+    directory: "packages/stripe"
     schedule:
       interval: "monthly"
   - package-ecosystem: "github-actions"
     directory: "/"
     schedule:
       interval: "monthly"
-    labels:
-      - autosubmit
