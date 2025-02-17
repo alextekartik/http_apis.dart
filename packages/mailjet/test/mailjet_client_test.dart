@@ -32,7 +32,9 @@ void main() {
               'Filename': 'text_14',
               'Base64Content': 'text_15'
             }
-          ]
+          ],
+          'TemplateID': 16,
+          'TemplateLanguage': false
         }
       ]
     });
