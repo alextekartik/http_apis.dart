@@ -130,6 +130,11 @@ class CvMailjetMessage extends CvModelBase {
   late final subject = CvField<String>('Subject');
   late final textPart = CvField<String>('TextPart');
   late final htmlPart = CvField<String>('HTMLPart');
+  // 				"TemplateID": 1,
+  // 						"TemplateLanguage": true,
+  late final templateId = CvField<int>('TemplateID');
+  late final templateLanguage = CvField<bool>('TemplateLanguage');
+
   late final attachments = CvModelListField<CvMailjetAttachment>('Attachments');
   @override
   late final fields = [
@@ -140,7 +145,9 @@ class CvMailjetMessage extends CvModelBase {
     subject,
     textPart,
     htmlPart,
-    attachments
+    attachments,
+    templateId,
+    templateLanguage,
   ];
 }
 
