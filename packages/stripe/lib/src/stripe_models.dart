@@ -23,8 +23,10 @@ void initStripeApiModels() {
     cvAddConstructor(StripeApiProductCreate.new);
     cvAddConstructor(StripeApiProductList.new);
     cvAddConstructor(StripeApiProductListOptions.new);
-    cvAddConstructors(
-        [StripeApiPaymentLinkUpdate.new, StripeApiPriceUpdate.new]);
+    cvAddConstructors([
+      StripeApiPaymentLinkUpdate.new,
+      StripeApiPriceUpdate.new,
+    ]);
   }
 }
 
@@ -33,7 +35,10 @@ mixin StripeApiMetadataMixin implements CvModel {
   List<CvField<Object?>> get metadataMixinFields => [metadata];
 }
 void bodyFieldsAddValue(
-    StripeApiBodyFields bodyFields, String key, Object? value) {
+  StripeApiBodyFields bodyFields,
+  String key,
+  Object? value,
+) {
   if (value is Iterable) {
     for (var (index, value) in value.indexed) {
       bodyFieldsAddValue(bodyFields, '$key[$index]', value);

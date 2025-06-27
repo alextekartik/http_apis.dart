@@ -9,8 +9,9 @@ var debugDeezerApi = false; // devWarning(true);
 
 extension UriJsonp on Uri {
   Uri withJsonp() => replace(
-      queryParameters: Map<String, Object?>.from(queryParameters)
-        ..['output'] = 'jsonp');
+    queryParameters: Map<String, Object?>.from(queryParameters)
+      ..['output'] = 'jsonp',
+  );
 }
 
 class DeezerApi {
@@ -28,19 +29,20 @@ class DeezerApi {
     _authClient.authToken = authToken;
   }
 
-  DeezerApi(
-      {this.code,
-      this.accessToken,
-      this.options,
+  DeezerApi({
+    this.code,
+    this.accessToken,
+    this.options,
 
-      /// Web only to go around CORS, automatically set to true when running on the web
-      bool? useJsonp})
-      : useJsonp = useJsonp ?? needJsonp {
+    /// Web only to go around CORS, automatically set to true when running on the web
+    bool? useJsonp,
+  }) : useJsonp = useJsonp ?? needJsonp {
     // assert(code != null || accessToken != null);
     initDeezerCvBuilders();
     if (debugDeezerApi) {
       print(
-          'DeezerApi code: $code accessToken: $accessToken, useJsonp: ${this.useJsonp}');
+        'DeezerApi code: $code accessToken: $accessToken, useJsonp: ${this.useJsonp}',
+      );
     }
   }
 

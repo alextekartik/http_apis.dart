@@ -65,8 +65,10 @@ class StripeApi {
   }
 
   Client get _client => _clientOrNull ??= BasicAuthClient(
-      credentials.secretKey ?? credentials.publishableKey!, '',
-      inner: baseClient);
+    credentials.secretKey ?? credentials.publishableKey!,
+    '',
+    inner: baseClient,
+  );
   Client? _clientOrNull;
 
   Uri get _stripeApiUrlBase => baseUri ?? stripeApiUrlBase;
@@ -75,10 +77,10 @@ class StripeApi {
       _stripeApiUrlBase.replace(path: url.join(_stripeApiUrlBase.path, path));
 
   Future<T> _send<T extends CvModel>(
-      Uri uri, Map<String, String> bodyFields) async {
-    var headers = {
-      httpHeaderContentType: httpContentTypeWwwFormUrlEncoded,
-    };
+    Uri uri,
+    Map<String, String> bodyFields,
+  ) async {
+    var headers = {httpHeaderContentType: httpContentTypeWwwFormUrlEncoded};
     var request = Request(httpMethodPost, uri);
     request.headers.clear();
     request.headers.addAll(headers);
@@ -117,7 +119,8 @@ class StripeApi {
   /// Create a payment link from a give price.
   /// https://stripe.com/docs/api/payment_links/payment_links/create
   Future<StripeApiPaymentLink> createPaymentLink(
-      StripeApiPaymentLinkCreate options) async {
+    StripeApiPaymentLinkCreate options,
+  ) async {
     var uri = _uri('payment_links');
     var bodyFields = options.toStripeApiBodyFields();
     return _send<StripeApiPaymentLink>(uri, bodyFields);
@@ -125,7 +128,9 @@ class StripeApi {
 
   /// https://stripe.com/docs/api/payment_links/payment_links/update
   Future<StripeApiPaymentLink> updatePaymentLink(
-      String paymentLinkId, StripeApiPaymentLinkUpdate options) async {
+    String paymentLinkId,
+    StripeApiPaymentLinkUpdate options,
+  ) async {
     var uri = _uri('payment_links/$paymentLinkId');
     var bodyFields = options.toStripeApiBodyFields();
     return _send<StripeApiPaymentLink>(uri, bodyFields);
@@ -148,7 +153,9 @@ class StripeApi {
   /// Create a payment link from a give price.
   /// https://stripe.com/docs/api/prices/create
   Future<StripeApiPrice> updatePrice(
-      String priceId, StripeApiPriceUpdate options) async {
+    String priceId,
+    StripeApiPriceUpdate options,
+  ) async {
     var uri = _uri('prices/$priceId');
     var bodyFields = options.toStripeApiBodyFields();
     return _send<StripeApiPrice>(uri, bodyFields);
@@ -177,11 +184,13 @@ class StripeApi {
 
   /// List products
   Future<StripeApiProductList> listProducts(
-      StripeApiProductListOptions options) async {
+    StripeApiProductListOptions options,
+  ) async {
     var uri = _uri('products');
 
     return _get<StripeApiProductList>(
-        uri.replace(queryParameters: options.toStripeApiParam()));
+      uri.replace(queryParameters: options.toStripeApiParam()),
+    );
   }
 
   Future<void> close() async {

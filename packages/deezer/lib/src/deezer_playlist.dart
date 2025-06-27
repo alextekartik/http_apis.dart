@@ -16,8 +16,15 @@ class DeezerPlaylist extends CvDeezerObject {
   final tracks = CvModelField<DeezerPlaylistTracks>('tracks');
 
   @override
-  List<CvField> get fields =>
-      [id, title, description, picture, pictureSmall, pictureMedium, tracks];
+  List<CvField> get fields => [
+    id,
+    title,
+    description,
+    picture,
+    pictureSmall,
+    pictureMedium,
+    tracks,
+  ];
 }
 
 class DeezerPlaylistTracks extends CvModelBase {

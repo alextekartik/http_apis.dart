@@ -15,13 +15,13 @@ void main() {
         {
           'From': {'Email': 'text_2', 'Name': 'text_3'},
           'To': [
-            {'Email': 'text_4', 'Name': 'text_5'}
+            {'Email': 'text_4', 'Name': 'text_5'},
           ],
           'Cc': [
-            {'Email': 'text_6', 'Name': 'text_7'}
+            {'Email': 'text_6', 'Name': 'text_7'},
           ],
           'Bcc': [
-            {'Email': 'text_8', 'Name': 'text_9'}
+            {'Email': 'text_8', 'Name': 'text_9'},
           ],
           'Subject': 'text_10',
           'TextPart': 'text_11',
@@ -30,23 +30,23 @@ void main() {
             {
               'ContentType': 'text_13',
               'Filename': 'text_14',
-              'Base64Content': 'text_15'
-            }
+              'Base64Content': 'text_15',
+            },
           ],
           'TemplateID': 16,
-          'TemplateLanguage': false
-        }
-      ]
+          'TemplateLanguage': false,
+        },
+      ],
     });
     expect((CvMailjetSendEmailResponse()..fillModel(apiFillOptions)).toMap(), {
       'Messages': [
         {
           'Status': 'text_2',
           'To': [
-            {'Email': 'text_3', 'MessageID': 'text_4', 'MessageHref': 'text_5'}
-          ]
-        }
-      ]
+            {'Email': 'text_3', 'MessageID': 'text_4', 'MessageHref': 'text_5'},
+          ],
+        },
+      ],
     });
   });
 }

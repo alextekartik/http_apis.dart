@@ -30,7 +30,7 @@ void main() {
       'nb_fan': 4425151,
       'radio': true,
       'tracklist': 'https://api.deezer.com/artist/27/top?limit=50',
-      'type': 'artist'
+      'type': 'artist',
     };
     var artist = map.cv<DeezerArtist>();
     expect(artist.id.v, '27');
@@ -42,7 +42,7 @@ void main() {
       'picture_small':
           'https://e-cdns-images.dzcdn.net/images/artist/f2bc007e9133c946ac3c3907ddc5d2ea/56x56-000000-80-0-0.jpg',
       'picture_medium':
-          'https://e-cdns-images.dzcdn.net/images/artist/f2bc007e9133c946ac3c3907ddc5d2ea/250x250-000000-80-0-0.jpg'
+          'https://e-cdns-images.dzcdn.net/images/artist/f2bc007e9133c946ac3c3907ddc5d2ea/250x250-000000-80-0-0.jpg',
     });
   });
   test('track', () {
@@ -87,8 +87,8 @@ void main() {
           'radio': true,
           'tracklist': 'https://api.deezer.com/artist/27/top?limit=50',
           'type': 'artist',
-          'role': 'Main'
-        }
+          'role': 'Main',
+        },
       ],
       'md5_image': '2e018122cb56986277102d2041a592c8',
       'artist': {
@@ -108,7 +108,7 @@ void main() {
             'https://e-cdns-images.dzcdn.net/images/artist/f2bc007e9133c946ac3c3907ddc5d2ea/1000x1000-000000-80-0-0.jpg',
         'radio': true,
         'tracklist': 'https://api.deezer.com/artist/27/top?limit=50',
-        'type': 'artist'
+        'type': 'artist',
       },
       'album': {
         'id': '302127',
@@ -126,14 +126,16 @@ void main() {
         'md5_image': '2e018122cb56986277102d2041a592c8',
         'release_date': '2001-03-07',
         'tracklist': 'https://api.deezer.com/album/302127/tracks',
-        'type': 'album'
+        'type': 'album',
       },
-      'type': 'track'
+      'type': 'track',
     };
     var track = map.cv<DeezerTrack>();
     expect(track.id.v, '3135556');
-    expect(track.preview.v,
-        'https://cdns-preview-d.dzcdn.net/stream/c-deda7fa9316d9e9e880d2c6207e92260-10.mp3');
+    expect(
+      track.preview.v,
+      'https://cdns-preview-d.dzcdn.net/stream/c-deda7fa9316d9e9e880d2c6207e92260-10.mp3',
+    );
     expect(track.title.v, 'Harder, Better, Faster, Stronger');
     var artist = track.artist.v!;
     expect(artist.id.v, '27');
@@ -141,8 +143,10 @@ void main() {
     var album = track.album.v!;
     expect(album.id.v, '302127');
     expect(album.title.v, 'Discovery');
-    expect(album.coverMedium.v,
-        'https://e-cdns-images.dzcdn.net/images/cover/2e018122cb56986277102d2041a592c8/250x250-000000-80-0-0.jpg');
+    expect(
+      album.coverMedium.v,
+      'https://e-cdns-images.dzcdn.net/images/cover/2e018122cb56986277102d2041a592c8/250x250-000000-80-0-0.jpg',
+    );
   });
   test('user', () {
     var map = {
@@ -172,10 +176,10 @@ void main() {
       'explicit_content_levels_available': [
         'explicit_display',
         'explicit_no_recommendation',
-        'explicit_hide'
+        'explicit_hide',
       ],
       'tracklist': 'https://api.deezer.com/user/513005798278/flow',
-      'type': 'user'
+      'type': 'user',
     };
     var user = map.cv<DeezerUser>();
     expect(user.id.v, '513005798278');
@@ -188,33 +192,42 @@ void main() {
         'type': 'OAuthException',
         'message':
             'An active access token must be used to query information about the current user',
-        'code': 200
-      }
+        'code': 200,
+      },
     };
     var error = map.cv<DeezerError>();
     expect(error.error.v!.type.v, 'OAuthException');
-    expect(error.error.v!.message.v,
-        'An active access token must be used to query information about the current user');
+    expect(
+      error.error.v!.message.v,
+      'An active access token must be used to query information about the current user',
+    );
     expect(error.error.v!.code.v, 200);
   });
   test('DeezerAppInfo', () {
-    expect(fillModel<DeezerAppInfo>(),
-        {'id': 'text_1', 'secretKey': 'text_2', 'domain': 'text_3'});
+    expect(fillModel<DeezerAppInfo>(), {
+      'id': 'text_1',
+      'secretKey': 'text_2',
+      'domain': 'text_3',
+    });
   });
 
   test('playlist', () {
     var playlist = simplePlaylistJson.cv<DeezerPlaylist>();
     expect(playlist.id.v, '260764721');
     expect(playlist.title.v, '1 item');
-    expect(playlist.picture.v,
-        'http://api.deezer.com/2.0/playlist/260764721/image');
+    expect(
+      playlist.picture.v,
+      'http://api.deezer.com/2.0/playlist/260764721/image',
+    );
     var tracks = playlist.tracks.v!.list.v!;
     expect(tracks.length, 1);
     var track = tracks.first;
     expect(track.id.v, '937330');
     expect(track.title.v, 'Oxford Comma');
-    expect(track.preview.v,
-        'http://cdn-preview-4.deezer.com/stream/c-4411fdd67515862edaa32086ca1efb1e-8.mp3');
+    expect(
+      track.preview.v,
+      'http://cdn-preview-4.deezer.com/stream/c-4411fdd67515862edaa32086ca1efb1e-8.mp3',
+    );
     expect(track.artist.v!.id.v, '75781');
     expect(track.artist.v!.name.v, 'Vampire Weekend');
 
@@ -242,11 +255,11 @@ void main() {
               'cover_small':
                   'http://cdn-images.dzcdn.net/images/cover/aace835cee2c52614f55282b6081e5c6/56x56-000000-80-0-0.jpg',
               'cover_medium':
-                  'http://cdn-images.dzcdn.net/images/cover/aace835cee2c52614f55282b6081e5c6/250x250-000000-80-0-0.jpg'
-            }
-          }
-        ]
-      }
+                  'http://cdn-images.dzcdn.net/images/cover/aace835cee2c52614f55282b6081e5c6/250x250-000000-80-0-0.jpg',
+            },
+          },
+        ],
+      },
     });
   });
 }
@@ -283,7 +296,7 @@ var simplePlaylistJson = {
     'id': 152687221,
     'name': 'tekartik',
     'tracklist': 'http://api.deezer.com/2.0/user/152687221/flow',
-    'type': 'user'
+    'type': 'user',
   },
   'type': 'playlist',
   'tracks': {
@@ -309,7 +322,7 @@ var simplePlaylistJson = {
           'name': 'Vampire Weekend',
           'link': 'http://www.deezer.com/artist/75781',
           'tracklist': 'http://api.deezer.com/2.0/artist/75781/top?limit=50',
-          'type': 'artist'
+          'type': 'artist',
         },
         'album': {
           'id': 105411,
@@ -325,13 +338,13 @@ var simplePlaylistJson = {
               'http://cdn-images.dzcdn.net/images/cover/aace835cee2c52614f55282b6081e5c6/1000x1000-000000-80-0-0.jpg',
           'md5_image': 'aace835cee2c52614f55282b6081e5c6',
           'tracklist': 'http://api.deezer.com/2.0/album/105411/tracks',
-          'type': 'album'
+          'type': 'album',
         },
-        'type': 'track'
-      }
+        'type': 'track',
+      },
     ],
-    'checksum': 'ad120380240513450c02797a7b333008'
-  }
+    'checksum': 'ad120380240513450c02797a7b333008',
+  },
 };
 
 var simpleJsonPlaylistTracks1 = {
@@ -366,7 +379,7 @@ var simpleJsonPlaylistTracks1 = {
         'picture_xl':
             'https://e-cdns-images.dzcdn.net/images/artist/9e6559537b6a3419e4956b3222862ab7/1000x1000-000000-80-0-0.jpg',
         'tracklist': 'https://api.deezer.com/2.0/artist/75781/top?limit=50',
-        'type': 'artist'
+        'type': 'artist',
       },
       'album': {
         'id': 105411,
@@ -382,11 +395,11 @@ var simpleJsonPlaylistTracks1 = {
             'https://e-cdns-images.dzcdn.net/images/cover/6fc963e3e5bd489dd82b0e02c3122792/1000x1000-000000-80-0-0.jpg',
         'md5_image': '6fc963e3e5bd489dd82b0e02c3122792',
         'tracklist': 'https://api.deezer.com/2.0/album/105411/tracks',
-        'type': 'album'
+        'type': 'album',
       },
-      'type': 'track'
-    }
+      'type': 'track',
+    },
   ],
   'checksum': 'ad120380240513450c02797a7b333008',
-  'total': 1
+  'total': 1,
 };

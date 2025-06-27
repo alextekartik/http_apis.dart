@@ -33,9 +33,9 @@ class StripeApiPrice extends CvModelBase
 
   @override
   List<CvField<Object?>> get fields => [
-        id,
-        ...createUpdatePriceMixinFields,
-        ...priceMixinFields,
-        ...metadataMixinFields
-      ];
+    id,
+    ...createUpdatePriceMixinFields,
+    ...priceMixinFields,
+    ...metadataMixinFields,
+  ];
 }

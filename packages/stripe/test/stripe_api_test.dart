@@ -40,28 +40,33 @@ void main() {
         });
         client = httpFactory.client.newClient();
         stripeApi = StripeApi(
-            credentials: StripeApiCredentials(
-                secretKey: 'secret', publishableKey: 'publishable'),
-            baseUri: uri,
-            baseClient: client);
+          credentials: StripeApiCredentials(
+            secretKey: 'secret',
+            publishableKey: 'publishable',
+          ),
+          baseUri: uri,
+          baseClient: client,
+        );
       });
       tearDown(() async {
         await server.close();
         client.close();
       });
       test('createPrice', () async {
-        var result = await stripeApi.createPrice(StripeApiPriceCreate()
-          ..productId.v = 'product'
-          ..amount.v = 1000
-          ..currency.v = stripeCurrencyEuro
-          ..nickname.v = 'Test recurring with accént'
-          ..metadata.v = {
-            'meta_1': 'Test meta value',
-            'meta_2': 'Test meta value 2'
-          }
-          ..recurring.v = (StringApiPriceRecurring()
-            ..interval.v = stripePriceRecurringIntervalDay
-            ..intervalCount.v = 1));
+        var result = await stripeApi.createPrice(
+          StripeApiPriceCreate()
+            ..productId.v = 'product'
+            ..amount.v = 1000
+            ..currency.v = stripeCurrencyEuro
+            ..nickname.v = 'Test recurring with accént'
+            ..metadata.v = {
+              'meta_1': 'Test meta value',
+              'meta_2': 'Test meta value 2',
+            }
+            ..recurring.v = (StringApiPriceRecurring()
+              ..interval.v = stripePriceRecurringIntervalDay
+              ..intervalCount.v = 1),
+        );
         expect(result.id.v, 'price_1');
       });
     });

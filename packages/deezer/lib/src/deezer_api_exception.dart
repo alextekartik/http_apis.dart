@@ -5,8 +5,11 @@ class DeezerApiException implements Exception {
   final DeezerErrorInfo? errorInfo;
   final String? rawBody;
 
-  DeezerApiException(
-      {this.errorInfo, this.httpStatusCode, required this.rawBody});
+  DeezerApiException({
+    this.errorInfo,
+    this.httpStatusCode,
+    required this.rawBody,
+  });
 
   @override
   String toString() => errorInfo != null

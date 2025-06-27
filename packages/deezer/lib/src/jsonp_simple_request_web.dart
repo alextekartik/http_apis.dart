@@ -42,22 +42,22 @@ class JsonpRequest implements HttpSimpleRequest {
     _callbackSubscription = web.EventStreamProviders.messageEvent
         .forTarget(web.window)
         .listen((web.MessageEvent event) {
-      if (debugJsonp) {
-        print('event: ${event.data}');
-      }
-      var rawData = event.data;
-      if (rawData.isA<js.JSString>()) {
-        var data = (rawData as js.JSString).toDart;
-        if (data.startsWith('{')) {
-          var result = parseJsonObject(data)!;
-          // devPrint(result);
-          if (result['callbackName'] == _callbackName) {
-            _completer!.complete(result['data']);
-            _cancel();
+          if (debugJsonp) {
+            print('event: ${event.data}');
           }
-        }
-      }
-    });
+          var rawData = event.data;
+          if (rawData.isA<js.JSString>()) {
+            var data = (rawData as js.JSString).toDart;
+            if (data.startsWith('{')) {
+              var result = parseJsonObject(data)!;
+              // devPrint(result);
+              if (result['callbackName'] == _callbackName) {
+                _completer!.complete(result['data']);
+                _cancel();
+              }
+            }
+          }
+        });
   }
 
   void _cancel([Exception? e]) {
@@ -74,7 +74,8 @@ class JsonpRequest implements HttpSimpleRequest {
 
   void _addCallbackScript() {
     _callbackScript = web.HTMLScriptElement()
-      ..text = """function $_callbackName(value) {
+      ..text =
+          """function $_callbackName(value) {
       window.postMessage('{"callbackName":"$_callbackName","data":' + JSON.stringify(value) + '}', '*');
     }""";
     if (debugJsonp) {
@@ -99,15 +100,17 @@ class JsonpRequest implements HttpSimpleRequest {
     var completer = _completer = Completer<Object>();
     _callbackName = 'jsonpCallback_${_requestCounter++}';
     uri = uri.replace(
-        queryParameters: Map<String, Object?>.from(uri.queryParameters)
-          ..[callbackParam] = _callbackName);
+      queryParameters: Map<String, Object?>.from(uri.queryParameters)
+        ..[callbackParam] = _callbackName,
+    );
 
     _listenForCallback();
     _addCallbackScript();
     _doRequest(uri);
 
-    Future<void>.delayed(Duration(milliseconds: 30000))
-        .then((_) => _cancel(TimeoutException('jsonp request timeout $uri')));
+    Future<void>.delayed(
+      Duration(milliseconds: 30000),
+    ).then((_) => _cancel(TimeoutException('jsonp request timeout $uri')));
 
     return completer.future;
   }

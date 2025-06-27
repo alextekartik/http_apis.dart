@@ -31,8 +31,9 @@ class DeezerAuthClient extends http.BaseClient {
       } else {
         authToken ??= await getAccessToken();
         url = url.replace(
-            queryParameters: Map<String, String>.from(url.queryParameters)
-              ..['access_token'] = authToken!);
+          queryParameters: Map<String, String>.from(url.queryParameters)
+            ..['access_token'] = authToken!,
+        );
         newRequest = request.copyRequest(url: url);
       }
       if (debugDeezerApi) {
@@ -78,7 +79,9 @@ class DeezerAuthClient extends http.BaseClient {
           }
         }
         throw DeezerApiException(
-            httpStatusCode: response.statusCode, rawBody: rawBody);
+          httpStatusCode: response.statusCode,
+          rawBody: rawBody,
+        );
       }
       bytes = await response.stream.toBytes();
 
@@ -110,11 +113,13 @@ class DeezerAuthClient extends http.BaseClient {
       return api.accessToken;
     }
     var uri = Uri.parse('https://connect.deezer.com/oauth/access_token.php')
-        .replace(queryParameters: {
-      'app_id': api.options?.appId,
-      'secret': api.options?.appSecret,
-      'code': api.code
-    });
+        .replace(
+          queryParameters: {
+            'app_id': api.options?.appId,
+            'secret': api.options?.appSecret,
+            'code': api.code,
+          },
+        );
     if (debugDeezerApi) {
       print('[DQury access_token] $uri');
     }
@@ -146,8 +151,9 @@ class DeezerAuthClient extends http.BaseClient {
 
   Future<String> readString(Uri uri) {
     uri = uri.replace(
-        queryParameters: Map<String, String>.from(uri.queryParameters)
-          ..['access_token'] = authToken!);
+      queryParameters: Map<String, String>.from(uri.queryParameters)
+        ..['access_token'] = authToken!,
+    );
     return api.readString(uri);
   }
 }

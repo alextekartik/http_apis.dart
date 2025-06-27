@@ -39,14 +39,19 @@ class MailjetClient {
     initMailjetCvBuilders();
   }
 
-  MailjetClient(
-      {required String apiKey, required String apiSecret, http.Client? client})
-      : this.widthCredentials(MailjetCredentials(apiKey, apiSecret),
-            client: client);
+  MailjetClient({
+    required String apiKey,
+    required String apiSecret,
+    http.Client? client,
+  }) : this.widthCredentials(
+         MailjetCredentials(apiKey, apiSecret),
+         client: client,
+       );
 
   /// The main way to send an email
   Future<CvMailjetSendEmailResponse> sendEmail(
-      CvMailjetSendEmailRequest request) async {
+    CvMailjetSendEmailRequest request,
+  ) async {
     var result = await _send(request.toMap());
     return result.cv<CvMailjetSendEmailResponse>();
   }
@@ -57,12 +62,15 @@ class MailjetClient {
       print('send: $body');
     }
     var resultText = await httpClientRead(
-        _client, httpMethodPost, Uri.parse('https://api.mailjet.com/v3.1/send'),
-        headers: {
-          httpHeaderContentType: httpContentTypeJson,
-          httpHeaderAuthorization: _getAuthString(apiKey, apiSecret)
-        },
-        body: body);
+      _client,
+      httpMethodPost,
+      Uri.parse('https://api.mailjet.com/v3.1/send'),
+      headers: {
+        httpHeaderContentType: httpContentTypeJson,
+        httpHeaderAuthorization: _getAuthString(apiKey, apiSecret),
+      },
+      body: body,
+    );
     if (_debug) {
       print('recv: $resultText');
     }

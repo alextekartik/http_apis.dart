@@ -6,10 +6,7 @@ mixin StripeApiPriceCreateUpdateMixin {
   final nickname = CvField<String>('nickname');
   final active = CvField<bool>('active');
 
-  List<CvField<Object?>> get createUpdatePriceMixinFields => [
-        nickname,
-        active,
-      ];
+  List<CvField<Object?>> get createUpdatePriceMixinFields => [nickname, active];
 }
 
 mixin StripeApiPriceMixin {
@@ -21,11 +18,11 @@ mixin StripeApiPriceMixin {
   final recurring = CvModelField<StringApiPriceRecurring>('recurring');
 
   List<CvField<Object?>> get priceMixinFields => [
-        productId,
-        currency,
-        amount,
-        recurring,
-      ];
+    productId,
+    currency,
+    amount,
+    recurring,
+  ];
 }
 
 /// https://stripe.com/docs/api/prices/create
@@ -36,18 +33,20 @@ class StripeApiPriceCreate extends CvModelBase
         StripeApiMetadataMixin {
   @override
   List<CvField<Object?>> get fields => [
-        ...createUpdatePriceMixinFields,
-        ...priceMixinFields,
-        ...metadataMixinFields
-      ];
+    ...createUpdatePriceMixinFields,
+    ...priceMixinFields,
+    ...metadataMixinFields,
+  ];
 }
 
 /// https://stripe.com/docs/api/prices/update
 class StripeApiPriceUpdate extends CvModelBase
     with StripeApiPriceCreateUpdateMixin, StripeApiMetadataMixin {
   @override
-  List<CvField<Object?>> get fields =>
-      [...createUpdatePriceMixinFields, ...metadataMixinFields];
+  List<CvField<Object?>> get fields => [
+    ...createUpdatePriceMixinFields,
+    ...metadataMixinFields,
+  ];
 }
 
 /// Optional recurring.
