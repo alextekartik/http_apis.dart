@@ -80,10 +80,7 @@ extension StripeApiPaymentLinkExt on StripeApiPaymentLink {
   Uri uriWith({String? email, String? locale}) {
     var uri = Uri.parse(url.v!);
     uri = uri.replace(
-      queryParameters: {
-        if (email != null) 'prefilled_email': email,
-        if (locale != null) 'locale': locale,
-      },
+      queryParameters: {'prefilled_email': ?email, 'locale': ?locale},
     );
     return uri;
   }
