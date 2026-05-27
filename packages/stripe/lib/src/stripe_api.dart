@@ -17,6 +17,10 @@ import 'stripe_models.dart';
 
 var debugStripeApi = false;
 final stripeApiUrlBase = Uri.parse('https://api.stripe.com/v1');
+void _log(Object? message) {
+  // ignore: avoid_print
+  print(message);
+}
 
 const httpContentTypeWwwFormUrlEncoded =
     'application/x-www-form-urlencoded'; //; charset=utf-8';
@@ -87,8 +91,8 @@ class StripeApi {
 
     request.bodyFields = bodyFields;
     if (debugStripeApi) {
-      print('send: $uri');
-      print('      ${request.bodyFields}');
+      _log('send: $uri');
+      _log('      ${request.bodyFields}');
     }
 
     request.encoding = Encoding.getByName('utf-8')!;
@@ -96,7 +100,7 @@ class StripeApi {
     var response = await _client.send(request);
     var data = await response.stream.bytesToString();
     if (debugStripeApi) {
-      print('recv: $data');
+      _log('recv: $data');
     }
     var object = data.cv<T>();
     return object;
@@ -104,13 +108,13 @@ class StripeApi {
 
   Future<T> _get<T extends CvModel>(Uri uri) async {
     if (debugStripeApi) {
-      print('get: $uri');
+      _log('get: $uri');
     }
     var request = Request(httpMethodGet, uri);
     var response = await _client.send(request);
     var data = await response.stream.bytesToString();
     if (debugStripeApi) {
-      print('recv: $data');
+      _log('recv: $data');
     }
     var object = data.cv<T>();
     return object;

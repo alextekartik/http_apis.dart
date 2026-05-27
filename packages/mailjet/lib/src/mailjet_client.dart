@@ -12,6 +12,11 @@ import 'mailjet_models.dart';
 /// To set before creating the client.
 var debugMailjet = false;
 
+void _log(Object? message) {
+  // ignore: avoid_print
+  print(message);
+}
+
 class MailjetCredentials {
   final String apiKey;
   final String apiSecret;
@@ -59,7 +64,7 @@ class MailjetClient {
   Future<Map> _send(Map request) async {
     var body = jsonEncode(request);
     if (_debug) {
-      print('send: $body');
+      _log('send: $body');
     }
     var resultText = await httpClientRead(
       _client,
@@ -72,7 +77,7 @@ class MailjetClient {
       body: body,
     );
     if (_debug) {
-      print('recv: $resultText');
+      _log('recv: $resultText');
     }
     return jsonDecode(resultText) as Map;
   }

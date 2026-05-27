@@ -32,6 +32,7 @@ void main() {
           if (path == 'prices') {
             sendResponse((StripeApiPrice()..id.v = 'price_1').toJson());
           } else {
+            // ignore: avoid_print
             print('request: $path');
             request.response
               ..write('test')
