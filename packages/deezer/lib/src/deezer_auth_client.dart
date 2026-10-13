@@ -22,35 +22,18 @@ class DeezerAuthClient extends http.BaseClient {
     late http.StreamedResponse response;
 
     /// Set body, bytes and response
-    Future doSend() async {
+    Future<void> doSend() async {
       var originalRequestUrl = request.url;
-      var url = originalRequestUrl;
-      http.BaseRequest newRequest;
-      if (authToken == null && api.code == null) {
-        newRequest = request.copyRequest();
-      } else {
-        authToken ??= await getAccessToken();
-        url = url.replace(
-          queryParameters: Map<String, String>.from(url.queryParameters)
-            ..['access_token'] = authToken!,
-        );
-        newRequest = request.copyRequest(url: url);
-      }
+      var token = await _authTokenOrNull();
+      var newRequest = token == null
+          ? request.copyRequest()
+          : request.copyRequest(
+              url: _withAccessToken(originalRequestUrl, token),
+            );
       if (debugDeezerApi) {
         print('[DQury] $originalRequestUrl');
       }
 
-      // var body = await api.readAny(url);
-      //print('[DResp] ${body.runtimeType} $body');
-      /*
-      if (debugWebServices) {
-        logD('${newRequest.method} ${newRequest.url} ${newRequest.headers}');
-      }
-      newRequest.headers['client_id'] = webServices.options2.clientId;
-      newRequest.headers['client_secret'] = webServices.options2.clientSecret;
-      newRequest.headers['Connection'] = 'keep-alive';
-      newRequest.headers['Accept'] = httpContentTypeJson;
-      */
       response = await _client.send(newRequest);
 
       if (!isHttpStatusCodeSuccessful(response.statusCode)) {
@@ -65,18 +48,6 @@ class DeezerAuthClient extends http.BaseClient {
           }
         } catch (e) {
           print('[DResp ${response.statusCode}] error: $e');
-        }
-        if (debugDeezerApi) {
-          try {
-            bytes = await response.stream.toBytes();
-
-            body = utf8.decode(bytes);
-            if (debugDeezerApi) {
-              print('[DResp ${response.statusCode}] $body');
-            }
-          } catch (e) {
-            print('[DResp ${response.statusCode}] error: $e');
-          }
         }
         throw DeezerApiException(
           httpStatusCode: response.statusCode,
@@ -108,10 +79,34 @@ class DeezerAuthClient extends http.BaseClient {
     return response.copyWithBytes(bytes);
   }
 
-  Future<String?> getAccessToken() async {
-    if (api.code == null) {
-      return api.accessToken;
+  /// The token to add to requests, null when there is neither a token nor a
+  /// code to exchange.
+  ///
+  /// Throws a [DeezerApiException] if the code exchange fails.
+  Future<String?> _authTokenOrNull() async {
+    if (authToken == null && api.code == null) {
+      return null;
     }
+    if (authToken == null) {
+      var exchange = await _exchangeCode();
+      authToken =
+          exchange.accessToken ??
+          (throw DeezerApiException(
+            httpStatusCode: exchange.statusCode,
+            rawBody: exchange.body,
+          ));
+    }
+    return authToken;
+  }
+
+  Uri _withAccessToken(Uri uri, String token) => uri.replace(
+    queryParameters: Map<String, String>.from(uri.queryParameters)
+      ..['access_token'] = token,
+  );
+
+  /// Exchange the code for an access token (null on failure).
+  Future<({String? accessToken, int statusCode, String body})>
+  _exchangeCode() async {
     var uri = Uri.parse('https://connect.deezer.com/oauth/access_token.php')
         .replace(
           queryParameters: {
@@ -123,37 +118,35 @@ class DeezerAuthClient extends http.BaseClient {
     if (debugDeezerApi) {
       print('[DQury access_token] $uri');
     }
-    late String body;
-    if (true) {
-      var response = await http.get(uri);
-      // access_token=frZ0joLUqBHyl9rMTReymQrh95cOxZiz30jAI7DaoOs6vANJgsw&expires=3600
-      //print(response.body);
-      //print(response.headers);
-      body = response.body.trim();
-      if (debugDeezerApi) {
-        print('[DResp access token ${response.statusCode}] $body');
-      }
-      // ignore: dead_code
-    } else {
-      body = await api.readString(uri);
-      if (debugDeezerApi) {
-        print('[DResp access token $body');
-      }
+    var response = await http.get(uri);
+    // access_token=xxx&expires=3600
+    var body = response.body.trim();
+    if (debugDeezerApi) {
+      print('[DResp access token ${response.statusCode}] $body');
     }
-    // print(body);
+    String? accessToken;
     if (body.startsWith('access_token')) {
-      var accessToken = body.split('=')[1].split('&')[0];
-      // print('accessToken: $accessToken');
-      return accessToken;
+      accessToken = body.split('=')[1].split('&')[0];
     }
-    return null;
+    return (
+      accessToken: accessToken,
+      statusCode: response.statusCode,
+      body: body,
+    );
   }
 
-  Future<String> readString(Uri uri) {
-    uri = uri.replace(
-      queryParameters: Map<String, String>.from(uri.queryParameters)
-        ..['access_token'] = authToken!,
-    );
+  Future<String?> getAccessToken() async {
+    if (api.code == null) {
+      return api.accessToken;
+    }
+    return (await _exchangeCode()).accessToken;
+  }
+
+  Future<String> readString(Uri uri) async {
+    var token = await _authTokenOrNull();
+    if (token != null) {
+      uri = _withAccessToken(uri, token);
+    }
     return api.readString(uri);
   }
 }

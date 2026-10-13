@@ -33,10 +33,18 @@ class JsonpRequest implements HttpSimpleRequest {
   web.HTMLScriptElement? _callbackScript;
   web.HTMLScriptElement? _jsonpScript;
   final String callbackParam;
-  StreamSubscription? _callbackSubscription;
-  Completer? _completer;
 
-  JsonpRequest({this.callbackParam = 'callback'});
+  /// Request timeout.
+  final Duration timeout;
+  StreamSubscription<web.MessageEvent>? _callbackSubscription;
+  StreamSubscription<web.Event>? _errorSubscription;
+  Timer? _timeoutTimer;
+  Completer<Object>? _completer;
+
+  JsonpRequest({
+    this.callbackParam = 'callback',
+    this.timeout = const Duration(milliseconds: 30000),
+  });
 
   void _listenForCallback() {
     _callbackSubscription = web.EventStreamProviders.messageEvent
@@ -52,23 +60,45 @@ class JsonpRequest implements HttpSimpleRequest {
               var result = parseJsonObject(data)!;
               // devPrint(result);
               if (result['callbackName'] == _callbackName) {
-                _completer!.complete(result['data']);
-                _cancel();
+                var data = result['data'];
+                if (data == null) {
+                  _fail(Exception('jsonp null result'));
+                } else {
+                  _succeed(data);
+                }
               }
             }
           }
         });
   }
 
-  void _cancel([Exception? e]) {
+  void _cleanUp() {
+    _timeoutTimer?.cancel();
+    _timeoutTimer = null;
     _callbackSubscription?.cancel();
     _callbackSubscription = null;
+    _errorSubscription?.cancel();
+    _errorSubscription = null;
     _callbackScript?.remove();
     _callbackScript = null;
     _jsonpScript?.remove();
     _jsonpScript = null;
-    if (!(_completer?.isCompleted ?? false)) {
-      throw e ?? Exception('jsonp request cancelled');
+  }
+
+  void _succeed(Object data) {
+    var completer = _completer!;
+    _cleanUp();
+    if (!completer.isCompleted) {
+      completer.complete(data);
+    }
+  }
+
+  /// Completes the request with [error] (timeout or script load error).
+  void _fail(Object error) {
+    var completer = _completer!;
+    _cleanUp();
+    if (!completer.isCompleted) {
+      completer.completeError(error);
     }
   }
 
@@ -89,6 +119,10 @@ class JsonpRequest implements HttpSimpleRequest {
       print('jsonpRequest: $uri');
     }
     var script = _jsonpScript = web.HTMLScriptElement()..src = uri.toString();
+    // Network error, 404...
+    _errorSubscription = web.EventStreamProviders.errorEvent
+        .forTarget(script)
+        .listen((_) => _fail(Exception('jsonp request failed $uri')));
     web.document.body!.appendChild(script);
     //script.remove();
     // devPrint(document.body!.innerHtml);
@@ -108,9 +142,10 @@ class JsonpRequest implements HttpSimpleRequest {
     _addCallbackScript();
     _doRequest(uri);
 
-    Future<void>.delayed(
-      Duration(milliseconds: 30000),
-    ).then((_) => _cancel(TimeoutException('jsonp request timeout $uri')));
+    _timeoutTimer = Timer(
+      timeout,
+      () => _fail(TimeoutException('jsonp request timeout $uri', timeout)),
+    );
 
     return completer.future;
   }

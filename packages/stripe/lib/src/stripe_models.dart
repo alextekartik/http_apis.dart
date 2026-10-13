@@ -47,12 +47,13 @@ void bodyFieldsAddValue(
     for (var entry in value.entries) {
       bodyFieldsAddValue(bodyFields, '$key[${entry.key}]', entry.value);
     }
-  } else {
+  } else if (value != null) {
+    // A null value is not sent (it would be stored as the text 'null').
     bodyFields[key] = value.toString();
   }
 }
 
-extension CvModelStripeListExt on Iterable {
+extension CvModelStripeListExt on Iterable<Object?> {
   StripeApiBodyFields toStripeApiBodyFields() {
     var bodyFields = newStripeApiBodyFields();
     for (var (index, value) in indexed) {
@@ -62,7 +63,7 @@ extension CvModelStripeListExt on Iterable {
   }
 }
 
-extension CvModelStripeMapExt on Map {
+extension CvModelStripeMapExt on Map<Object?, Object?> {
   StripeApiBodyFields toStripeApiBodyFields() {
     var bodyFields = newStripeApiBodyFields();
     for (var entry in entries) {

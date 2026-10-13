@@ -1,11 +1,9 @@
 import 'package:cv/cv_json.dart';
-import 'package:http/http.dart';
 import 'package:path/path.dart';
 // ignore: depend_on_referenced_packages
 import 'package:tekartik_common_utils/common_utils_import.dart';
 import 'package:tekartik_http/basic_auth_client.dart';
 import 'package:tekartik_http/http_client.dart';
-import 'package:tekartik_stripe_api/src/api_options.dart';
 import 'package:tekartik_stripe_api/src/payment_link_options.dart';
 import 'package:tekartik_stripe_api/src/price_model.dart';
 import 'package:tekartik_stripe_api/src/price_options.dart';
@@ -46,16 +44,6 @@ typedef StripeApiBodyFields = Map<String, String>;
 // ignore: prefer_collection_literals
 StripeApiBodyFields newStripeApiBodyFields() => StripeApiBodyFields();
 
-extension StripeApiBodyFieldsExt on StripeApiBodyFields {
-  void addMetadata(StripeApiMetadata? metadata) {
-    if (metadata != null) {
-      for (var entry in metadata.entries) {
-        this['metadata[${entry.key}]'] = '${entry.value}';
-      }
-    }
-  }
-}
-
 /// Stripe API client
 class StripeApi {
   final StripeApiCredentials credentials;
@@ -80,44 +68,49 @@ class StripeApi {
   Uri _uri(String path) =>
       _stripeApiUrlBase.replace(path: url.join(_stripeApiUrlBase.path, path));
 
-  Future<T> _send<T extends CvModel>(
-    Uri uri,
-    Map<String, String> bodyFields,
-  ) async {
-    var headers = {httpHeaderContentType: httpContentTypeWwwFormUrlEncoded};
-    var request = Request(httpMethodPost, uri);
-    request.headers.clear();
-    request.headers.addAll(headers);
+  /// POST [bodyFields] (form url encoded).
+  Future<T> _send<T extends CvModel>(Uri uri, StripeApiBodyFields bodyFields) =>
+      _read<T>(httpMethodPost, uri, bodyFields: bodyFields);
 
-    request.bodyFields = bodyFields;
+  Future<T> _get<T extends CvModel>(Uri uri) => _read<T>(httpMethodGet, uri);
+
+  /// Throws an [HttpClientException] on a non 2xx status (the Stripe error is
+  /// in its response body).
+  Future<T> _read<T extends CvModel>(
+    String method,
+    Uri uri, {
+    StripeApiBodyFields? bodyFields,
+  }) async {
     if (debugStripeApi) {
-      _log('send: $uri');
-      _log('      ${request.bodyFields}');
+      _log('$method: $uri');
+      if (bodyFields != null) {
+        _log('      $bodyFields');
+      }
     }
-
-    request.encoding = Encoding.getByName('utf-8')!;
-
-    var response = await _client.send(request);
-    var data = await response.stream.bytesToString();
+    HttpClientResponse response;
+    try {
+      response = await httpClientSend(
+        _client,
+        method,
+        uri,
+        headers: bodyFields == null
+            ? null
+            : {httpHeaderContentType: httpContentTypeWwwFormUrlEncoded},
+        body: bodyFields,
+        encoding: bodyFields == null ? null : utf8,
+        throwOnFailure: true,
+      );
+    } on HttpClientException catch (e) {
+      if (debugStripeApi) {
+        _log('error: ${e.statusCode} ${utf8.decode(e.response.bodyBytes)}');
+      }
+      rethrow;
+    }
+    var data = utf8.decode(response.bodyBytes);
     if (debugStripeApi) {
       _log('recv: $data');
     }
-    var object = data.cv<T>();
-    return object;
-  }
-
-  Future<T> _get<T extends CvModel>(Uri uri) async {
-    if (debugStripeApi) {
-      _log('get: $uri');
-    }
-    var request = Request(httpMethodGet, uri);
-    var response = await _client.send(request);
-    var data = await response.stream.bytesToString();
-    if (debugStripeApi) {
-      _log('recv: $data');
-    }
-    var object = data.cv<T>();
-    return object;
+    return data.cv<T>();
   }
 
   /// Create a payment link from a give price.

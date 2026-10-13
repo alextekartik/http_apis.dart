@@ -210,4 +210,19 @@ void main() {
       ..description.v = 'Test description';
     expect(create.toStripeApiBodyFields(), bodyFields);
   });
+  test('null value not sent', () {
+    String? description;
+    var create = StripeApiProductCreate()
+      ..name.v = 'Test product'
+      ..description.v = description;
+    expect(create.toStripeApiBodyFields(), {'name': 'Test product'});
+    expect(
+      {
+        'a': null,
+        'b': [null, 1],
+        'c': {'d': null, 'e': 'f'},
+      }.toStripeApiBodyFields(),
+      {'b[1]': '1', 'c[e]': 'f'},
+    );
+  });
 }

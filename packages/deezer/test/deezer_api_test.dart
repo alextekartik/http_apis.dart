@@ -22,24 +22,27 @@ void main() {
     var deezerApi = DeezerApi();
     var artist = await deezerApi.getArtist('27');
     print(jsonPretty(artist.toMap()));
+    expect(artist.id.v, '27');
+    expect(artist.name.v, 'Daft Punk');
     // {
     //   "id": "27",
     //   "name": "Daft Punk",
     //   "picture": "http://api.deezer.com/2.0/artist/27/image"
     // }
 
-    // Missing
-    try {
-      artist = await deezerApi.getArtist('1234567891012');
-    } catch (e) {
-      expect(e, isA<DeezerApiException>());
-    }
+    // Missing (the JSONP path used to return an empty artist)
+    await expectLater(
+      deezerApi.getArtist('1234567891012'),
+      throwsA(isA<DeezerApiException>()),
+    );
   });
 
   test('Playlist', () async {
     var deezerApi = DeezerApi();
-    var artist = await deezerApi.getPlaylist('260764721');
-    print(jsonPretty(artist.toMap()));
+    var playlist = await deezerApi.getPlaylist('260764721');
+    print(jsonPretty(playlist.toMap()));
+    expect(playlist.id.v, '260764721');
+    expect(playlist.title.v, isNotEmpty);
     // {
     //   "id": "260764721",
     //   "title": "1 item",

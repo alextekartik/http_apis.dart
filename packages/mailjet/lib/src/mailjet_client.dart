@@ -61,7 +61,7 @@ class MailjetClient {
     return result.cv<CvMailjetSendEmailResponse>();
   }
 
-  Future<Map> _send(Map request) async {
+  Future<Map<String, Object?>> _send(Map<String, Object?> request) async {
     var body = jsonEncode(request);
     if (_debug) {
       _log('send: $body');
@@ -79,7 +79,7 @@ class MailjetClient {
     if (_debug) {
       _log('recv: $resultText');
     }
-    return jsonDecode(resultText) as Map;
+    return jsonDecode(resultText) as Map<String, Object?>;
   }
 
   /// Dispose the client

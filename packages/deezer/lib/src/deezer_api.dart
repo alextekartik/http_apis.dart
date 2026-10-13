@@ -4,6 +4,7 @@ import 'package:tekartik_deezer_api/src/import.dart';
 import 'package:tekartik_deezer_api/src/platform/jsonp.dart';
 
 import 'deezer_auth_client.dart';
+import 'deezer_json.dart';
 
 var debugDeezerApi = false; // devWarning(true);
 
@@ -69,19 +70,24 @@ class DeezerApi {
     return (await getArtistRaw(id)).cv<DeezerArtist>();
   }
 
-  Future<Object> readAny(Uri uri) async {
-    return await _readAny(uri);
-  }
+  Future<Object> readAny(Uri uri) => _readJson(uri);
 
-  Future<Object> _readAny(Uri uri) async {
+  /// Reads a json map or list (through JSONP on the web).
+  ///
+  /// A Deezer error throws a [DeezerApiException] on both paths (the auth
+  /// client checks it on io).
+  Future<Object> _readJson(Uri uri) async {
     if (debugDeezerApi) {
       print('uri: $uri');
     }
     try {
       if (useJsonp) {
         // Unauth only
-        uri = uri.withJsonp();
-        return await jsonpRequest(uri);
+        var result = await jsonpRequest(uri.withJsonp());
+        if (debugDeezerApi) {
+          print('dzresult ${result.runtimeType} $result');
+        }
+        return deezerCheckJsonResult(result);
       } else {
         var body = await _authClient.read(uri);
         return jsonDecode(body) as Object;
@@ -94,35 +100,20 @@ class DeezerApi {
     }
   }
 
-  Future<Model> _readMap(Uri uri) async {
-    if (useJsonp) {
-      // Unauth only
-      uri = uri.withJsonp();
-      return asModel((await jsonpRequest(uri)) as Map);
-    } else {
-      var body = await _authClient.read(uri);
-      return jsonDecode(body) as Model;
-    }
-  }
+  Future<Model> _readMap(Uri uri) async => asModel(await _readJson(uri) as Map);
 
   Future<String> readString(Uri uri) async {
-    if (debugDeezerApi) {
-      print('dzuri: $uri');
-    }
     if (useJsonp) {
-      // Unauth only
-      uri = uri.withJsonp();
-      var result = await jsonpRequest(uri);
-      if (debugDeezerApi) {
-        print('dzresult ${result.runtimeType} $result');
-      }
+      var result = await _readJson(uri);
       if (result is Map) {
         return jsonEncode(result);
       }
       return result.toString();
     } else {
-      var body = await _authClient.read(uri);
-      return body;
+      if (debugDeezerApi) {
+        print('dzuri: $uri');
+      }
+      return await _authClient.read(uri);
     }
   }
 
@@ -157,12 +148,12 @@ class DeezerApi {
   /// Need access token? tracks not available here.
   Future<List<DeezerPlaylist>> getUserPlaylists(String userId) async {
     var uri = _withAppendedPath('user/$userId/playlists');
-    var result = await _readAny(uri);
+    var result = await _readJson(uri);
     if (result is Map && result.containsKey('data')) {
       var data = result['data'] as List;
       return data.map((e) => e as Map).toList().cv<DeezerPlaylist>();
     } else if (result is List) {
-      return result.cast<Map>().cv<DeezerPlaylist>();
+      return result.cast<Map<Object?, Object?>>().cv<DeezerPlaylist>();
     }
     throw UnsupportedError('invalid result ${result.runtimeType} $result');
   }
@@ -180,10 +171,3 @@ class DeezerApi {
     return await _authClient.getAccessToken();
   }
 }
-
-// Application ID 636261
-// Application Name Meloquiz dev
-// Secret Key bb7570fe08f99a0b2b4eaef5bf549ce7
-// Application domain com.meloquiz
-// Contact email
-// Site url
