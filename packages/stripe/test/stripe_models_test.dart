@@ -45,7 +45,9 @@ void main() {
         'currency': 'text_4',
         'unit_amount': 5,
         'recurring': {'interval': 'text_6', 'interval_count': 7},
-        'metadata': {'field_1': 8},
+        'lookup_key': 'text_8',
+        'tax_behavior': 'text_9',
+        'metadata': {'field_1': 10},
       },
     );
 
@@ -64,7 +66,9 @@ void main() {
       'currency': 'text_5',
       'unit_amount': 6,
       'recurring': {'interval': 'text_7', 'interval_count': 8},
-      'metadata': {'field_1': 9},
+      'lookup_key': 'text_9',
+      'tax_behavior': 'text_10',
+      'metadata': {'field_1': 11},
     });
     map = {
       'id': 'price_1OCJgVJarQTbINzHAKSI2QsE',
@@ -102,6 +106,8 @@ void main() {
       'currency': 'eur',
       'unit_amount': 1000,
       'recurring': {'interval': 'day', 'interval_count': 1},
+      'lookup_key': null,
+      'tax_behavior': 'unspecified',
       'metadata': {'meta_1': 'Test meta value', 'meta_2': 'Test meta value 2'},
     });
     expect(

@@ -12,7 +12,15 @@ description: >-
   StripeApiPaymentLinkLineItem, StripeApiPaymentLinkSubscriptionData,
   uriWith, metadata, stripeCurrencyEuro, stripePriceRecurringInterval*,
   toStripeApiBodyFields, initStripeApiModels, debugStripeApi, and testing
-  against a memory http server.
+  against a memory http server; subscriptions: listPrices
+  (StripeApiPriceListOptions, lookup keys), createCheckoutSession
+  (StripeApiCheckoutSessionCreate, mode subscription), the customer portal
+  (createBillingPortalSession, createBillingPortalConfiguration),
+  getSubscription / updateSubscription / cancelSubscription
+  (StripeApiSubscription, cancel_at_period_end, currentPeriodEndSeconds),
+  webhook endpoints (createWebhookEndpoint, listWebhookEndpoints), webhook
+  events (StripeApiEvent, stripeEvent* constants) and their signature
+  (StripeWebhookSignature.verify).
 ---
 
 # Stripe products, prices and payment links (tekartik_stripe_api)
@@ -54,8 +62,24 @@ read and written through `.v`.
 * Endpoints, all `Future`s of a single model: `createProduct`, `getProduct`,
   `listProducts`; `createPrice`, `updatePrice(priceId, options)`, `getPrice`;
   `createPaymentLink`, `updatePaymentLink(paymentLinkId, options)`,
-  `getPaymentLink`. Anything else (customers, checkout sessions, webhooks,
-  refunds, deleting objects) is not wrapped: call the Stripe API yourself.
+  `getPaymentLink`; `listPrices`; `createCheckoutSession`,
+  `getCheckoutSession`; `createBillingPortalSession`,
+  `createBillingPortalConfiguration`, `listBillingPortalConfigurations`;
+  `getSubscription`, `updateSubscription`, `cancelSubscription` (DELETE);
+  `createWebhookEndpoint`, `listWebhookEndpoints`, `deleteWebhookEndpoint`.
+  Anything else (customers, refunds, invoices) is not wrapped: call the
+  Stripe API yourself.
+* Subscriptions: recurring prices with a `lookupKey` (find them back with
+  `listPrices(StripeApiPriceListOptions()..lookupKeys.v = [...])`), a
+  Checkout Session in `stripeCheckoutModeSubscription` mode
+  (`clientReferenceId` = your user id, `subscriptionData.metadata`,
+  `successUrl` / `cancelUrl`), then a webhook: verify the raw body with
+  `StripeWebhookSignature.verify(payload:, header: <Stripe-Signature>,
+  secret: <whsec_...>)`, parse `StripeApiEvent` and its `object`
+  (`StripeApiCheckoutSession`, `StripeApiSubscription`). The period end of a
+  subscription moved to its items in the API version 2025-03-31:
+  `currentPeriodEndSeconds` reads either. `StripeApiSubscriptionUpdate
+  ..cancelAtPeriodEnd.v = true` ends it at the end of the period.
 * Typical flow: create a product (`StripeApiProductCreate` with `name`,
   `description`), create a price for it (`StripeApiPriceCreate` with
   `productId` = the product id, `amount` in **cents** as an int, `currency`

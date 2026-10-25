@@ -24,6 +24,18 @@ import 'stripe_models.dart';
 //   "unit_amount": 987,
 //   "unit_amount_decimal": "987"
 // }
+/// A list of prices.
+class StripeApiPriceList extends CvModelBase {
+  /// More after.
+  final hasMore = CvField<bool>('has_more');
+
+  /// The prices.
+  final data = CvModelListField<StripeApiPrice>('data');
+
+  @override
+  List<CvField<Object?>> get fields => [data, hasMore];
+}
+
 class StripeApiPrice extends CvModelBase
     with
         StripeApiPriceCreateUpdateMixin,

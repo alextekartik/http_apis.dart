@@ -4,6 +4,14 @@
 library;
 
 export 'src/api_options.dart' show StripeApiMetadata;
+export 'src/billing_portal.dart'
+    show
+        StripeApiBillingPortalConfiguration,
+        StripeApiBillingPortalConfigurationCreate,
+        StripeApiBillingPortalConfigurationList,
+        StripeApiBillingPortalSession,
+        StripeApiBillingPortalSessionCreate;
+export 'src/checkout_session.dart';
 export 'src/constant.dart';
 export 'src/payment_link_model.dart'
     show StripeApiPaymentLink, StripeApiPaymentLinkExt;
@@ -13,9 +21,13 @@ export 'src/payment_link_options.dart'
         StripeApiPaymentLinkLineItem,
         StripeApiPaymentLinkSubscriptionData,
         StripeApiPaymentLinkUpdate;
-export 'src/price_model.dart' show StripeApiPrice;
+export 'src/price_model.dart' show StripeApiPrice, StripeApiPriceList;
 export 'src/price_options.dart'
-    show StringApiPriceRecurring, StripeApiPriceCreate, StripeApiPriceUpdate;
+    show
+        StringApiPriceRecurring,
+        StripeApiPriceCreate,
+        StripeApiPriceListOptions,
+        StripeApiPriceUpdate;
 export 'src/product_model.dart'
     show StripeApiProduct, StripeApiProductListOptions, StripeApiProductList;
 export 'src/product_options.dart' show StripeApiProductCreate;
@@ -27,3 +39,5 @@ export 'src/stripe_models.dart'
         CvModelStripeExt,
         StripeApiMetadataMixin,
         CvModelStripeMapExt;
+export 'src/subscription.dart';
+export 'src/webhook.dart';

@@ -5,8 +5,12 @@ import 'package:tekartik_stripe_api/src/price_model.dart';
 import 'package:tekartik_stripe_api/src/product_model.dart';
 import 'package:tekartik_stripe_api/src/stripe_api.dart';
 
+import 'billing_portal.dart';
+import 'checkout_session.dart';
 import 'price_options.dart';
 import 'product_options.dart';
+import 'subscription.dart';
+import 'webhook.dart';
 
 var _priceModelInitialized = false;
 void initStripeApiModels() {
@@ -26,6 +30,24 @@ void initStripeApiModels() {
     cvAddConstructors([
       StripeApiPaymentLinkUpdate.new,
       StripeApiPriceUpdate.new,
+      StripeApiPriceList.new,
+      StripeApiPriceListOptions.new,
+      StripeApiCheckoutLineItem.new,
+      StripeApiCheckoutSubscriptionData.new,
+      StripeApiCheckoutConsentCollection.new,
+      StripeApiCheckoutSessionCreate.new,
+      StripeApiCheckoutSession.new,
+      StripeApiBillingPortalSessionCreate.new,
+      StripeApiBillingPortalSession.new,
+      StripeApiBillingPortalConfigurationCreate.new,
+      StripeApiBillingPortalConfiguration.new,
+      StripeApiBillingPortalConfigurationList.new,
+      StripeApiSubscription.new,
+      StripeApiSubscriptionUpdate.new,
+      StripeApiWebhookEndpointCreate.new,
+      StripeApiWebhookEndpoint.new,
+      StripeApiWebhookEndpointList.new,
+      StripeApiEvent.new,
     ]);
   }
 }

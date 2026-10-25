@@ -4,6 +4,8 @@ import 'package:path/path.dart';
 import 'package:tekartik_common_utils/common_utils_import.dart';
 import 'package:tekartik_http/basic_auth_client.dart';
 import 'package:tekartik_http/http_client.dart';
+import 'package:tekartik_stripe_api/src/billing_portal.dart';
+import 'package:tekartik_stripe_api/src/checkout_session.dart';
 import 'package:tekartik_stripe_api/src/payment_link_options.dart';
 import 'package:tekartik_stripe_api/src/price_model.dart';
 import 'package:tekartik_stripe_api/src/price_options.dart';
@@ -12,6 +14,8 @@ import 'package:tekartik_stripe_api/src/product_options.dart';
 
 import 'payment_link_model.dart';
 import 'stripe_models.dart';
+import 'subscription.dart';
+import 'webhook.dart';
 
 var debugStripeApi = false;
 final stripeApiUrlBase = Uri.parse('https://api.stripe.com/v1');
@@ -73,6 +77,9 @@ class StripeApi {
       _read<T>(httpMethodPost, uri, bodyFields: bodyFields);
 
   Future<T> _get<T extends CvModel>(Uri uri) => _read<T>(httpMethodGet, uri);
+
+  Future<T> _delete<T extends CvModel>(Uri uri) =>
+      _read<T>(httpMethodDelete, uri);
 
   /// Throws an [HttpClientException] on a non 2xx status (the Stripe error is
   /// in its response body).
@@ -187,6 +194,99 @@ class StripeApi {
 
     return _get<StripeApiProductList>(
       uri.replace(queryParameters: options.toStripeApiParam()),
+    );
+  }
+
+  /// The prices of [options] (by lookup keys...).
+  /// https://docs.stripe.com/api/prices/list
+  Future<StripeApiPriceList> listPrices(
+    StripeApiPriceListOptions options,
+  ) async {
+    var uri = _uri('prices');
+    return _get<StripeApiPriceList>(
+      uri.replace(queryParameters: options.toQueryParameters()),
+    );
+  }
+
+  /// A Checkout Session, its url to open.
+  /// https://docs.stripe.com/api/checkout/sessions/create
+  Future<StripeApiCheckoutSession> createCheckoutSession(
+    StripeApiCheckoutSessionCreate options,
+  ) => _send<StripeApiCheckoutSession>(
+    _uri('checkout/sessions'),
+    options.toStripeApiBodyFields(),
+  );
+
+  /// Get a Checkout Session.
+  Future<StripeApiCheckoutSession> getCheckoutSession(String sessionId) =>
+      _get<StripeApiCheckoutSession>(_uri('checkout/sessions/$sessionId'));
+
+  /// A customer portal session, its url to open.
+  /// https://docs.stripe.com/api/customer_portal/sessions/create
+  Future<StripeApiBillingPortalSession> createBillingPortalSession(
+    StripeApiBillingPortalSessionCreate options,
+  ) => _send<StripeApiBillingPortalSession>(
+    _uri('billing_portal/sessions'),
+    options.toStripeApiBodyFields(),
+  );
+
+  /// A customer portal configuration.
+  /// https://docs.stripe.com/api/customer_portal/configurations/create
+  Future<StripeApiBillingPortalConfiguration> createBillingPortalConfiguration(
+    StripeApiBillingPortalConfigurationCreate options,
+  ) => _send<StripeApiBillingPortalConfiguration>(
+    _uri('billing_portal/configurations'),
+    options.toStripeApiBodyFields(),
+  );
+
+  /// The customer portal configurations (the first 100).
+  Future<StripeApiBillingPortalConfigurationList>
+  listBillingPortalConfigurations() =>
+      _get<StripeApiBillingPortalConfigurationList>(
+        _uri(
+          'billing_portal/configurations',
+        ).replace(queryParameters: {'limit': '100'}),
+      );
+
+  /// Get a subscription.
+  /// https://docs.stripe.com/api/subscriptions/retrieve
+  Future<StripeApiSubscription> getSubscription(String subscriptionId) =>
+      _get<StripeApiSubscription>(_uri('subscriptions/$subscriptionId'));
+
+  /// Update a subscription (cancel at the end of the period, or not).
+  /// https://docs.stripe.com/api/subscriptions/update
+  Future<StripeApiSubscription> updateSubscription(
+    String subscriptionId,
+    StripeApiSubscriptionUpdate options,
+  ) => _send<StripeApiSubscription>(
+    _uri('subscriptions/$subscriptionId'),
+    options.toStripeApiBodyFields(),
+  );
+
+  /// Cancel a subscription now.
+  /// https://docs.stripe.com/api/subscriptions/cancel
+  Future<StripeApiSubscription> cancelSubscription(String subscriptionId) =>
+      _delete<StripeApiSubscription>(_uri('subscriptions/$subscriptionId'));
+
+  /// A webhook endpoint, its signing secret in the answer only.
+  /// https://docs.stripe.com/api/webhook_endpoints/create
+  Future<StripeApiWebhookEndpoint> createWebhookEndpoint(
+    StripeApiWebhookEndpointCreate options,
+  ) => _send<StripeApiWebhookEndpoint>(
+    _uri('webhook_endpoints'),
+    options.toStripeApiBodyFields(),
+  );
+
+  /// The webhook endpoints (the first 100).
+  Future<StripeApiWebhookEndpointList> listWebhookEndpoints() =>
+      _get<StripeApiWebhookEndpointList>(
+        _uri('webhook_endpoints').replace(queryParameters: {'limit': '100'}),
+      );
+
+  /// Delete a webhook endpoint.
+  Future<void> deleteWebhookEndpoint(String webhookEndpointId) async {
+    await _delete<StripeApiWebhookEndpoint>(
+      _uri('webhook_endpoints/$webhookEndpointId'),
     );
   }
 

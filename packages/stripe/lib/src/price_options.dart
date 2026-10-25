@@ -17,11 +17,19 @@ mixin StripeApiPriceMixin {
   final amount = CvField<int>('unit_amount');
   final recurring = CvModelField<StringApiPriceRecurring>('recurring');
 
+  /// A key of your own to find the price ([StripeApiPriceListOptions]).
+  final lookupKey = CvField<String>('lookup_key');
+
+  /// `inclusive`, `exclusive` or `unspecified` (taxes).
+  final taxBehavior = CvField<String>('tax_behavior');
+
   List<CvField<Object?>> get priceMixinFields => [
     productId,
     currency,
     amount,
     recurring,
+    lookupKey,
+    taxBehavior,
   ];
 }
 
@@ -47,6 +55,32 @@ class StripeApiPriceUpdate extends CvModelBase
     ...createUpdatePriceMixinFields,
     ...metadataMixinFields,
   ];
+}
+
+/// https://docs.stripe.com/api/prices/list
+class StripeApiPriceListOptions extends CvModelBase {
+  /// The prices of these lookup keys.
+  final lookupKeys = CvListField<String>('lookup_keys');
+
+  /// Active ones only (true) or inactive ones only (false).
+  final active = CvField<bool>('active');
+
+  /// The prices of a product.
+  final productId = CvField<String>('product');
+
+  /// See [StripeApiProductListOptions.limit].
+  final limit = CvField<int>('limit');
+
+  @override
+  List<CvField<Object?>> get fields => [lookupKeys, active, productId, limit];
+
+  /// The query parameters (`lookup_keys[]` repeated).
+  Map<String, Object> toQueryParameters() => {
+    if (lookupKeys.v case var keys? when keys.isNotEmpty) 'lookup_keys[]': keys,
+    if (active.v case var active?) 'active': '$active',
+    'product': ?productId.v,
+    if (limit.v case var limit?) 'limit': '$limit',
+  };
 }
 
 /// Optional recurring.
