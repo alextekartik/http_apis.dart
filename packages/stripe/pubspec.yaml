@@ -1,6 +1,6 @@
 name: tekartik_stripe_api
 description: A starting point for Dart libraries or applications.
-version: 1.1.0
+version: 1.2.0
 publish_to: none
 
 environment:
@@ -18,6 +18,11 @@ dependencies:
   process_run: ">=1.2.1+1"
   cv: ">=1.1.0+4"
   crypto: ">=3.0.6"
+  tekartik_app_crypto:
+    git:
+      url: https://github.com/tekartik/app_common_utils.dart
+      path: app_crypto
+    version: '>=0.2.2'
 dev_dependencies:
   lints: ">=6.1.0"
   test: ">=1.31.0"

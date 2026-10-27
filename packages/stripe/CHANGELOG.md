@@ -1,3 +1,11 @@
+## 1.2.0
+
+- `StripeApiCredentials.toMapEnc` / `fromMapEnc`: the credentials as an
+  obfuscated map (the publishable key slightly obfuscated in clear, the
+  whole aes encrypted, the password next to it); `toJsonEnc` writes it as a
+  json to keep in a git ignored file and paste in a `fromMapEnc` call;
+  `toMap` / `fromMap`.
+
 ## 1.1.0
 
 - Subscriptions: prices by lookup key, Checkout Sessions, the customer

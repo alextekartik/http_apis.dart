@@ -13,6 +13,13 @@ export 'src/billing_portal.dart'
         StripeApiBillingPortalSessionCreate;
 export 'src/checkout_session.dart';
 export 'src/constant.dart';
+export 'src/credentials_enc.dart'
+    show
+        stripeApiCredentialsEncType,
+        stripeApiCredentialsToMapEnc,
+        stripeApiCredentialsToJsonEnc,
+        stripeApiCredentialsFromMapEnc,
+        stripeApiKeyObfuscate;
 export 'src/payment_link_model.dart'
     show StripeApiPaymentLink, StripeApiPaymentLinkExt;
 export 'src/payment_link_options.dart'

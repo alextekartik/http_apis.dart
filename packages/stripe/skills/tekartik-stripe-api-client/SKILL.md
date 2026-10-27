@@ -56,6 +56,14 @@ read and written through `.v`.
 * **Server side only**: never embed a secret key in a Flutter app, a web app
   or a repo. Read it from an environment variable or a secret manager, use
   `sk_test_...` while developing, and call `await stripeApi.close()` when done.
+* `credentials.toMapEnc()` gives an obfuscated map (`type`
+  `stripe_credentials_enc`, the publishable key slightly obfuscated and the
+  secret key kind in clear, the whole aes encrypted in `enc`, a random
+  `password` next to it) that `StripeApiCredentials.fromMapEnc(map)` reads
+  back; `toJsonEnc()` is that map as an indented json, a dart map literal to
+  paste as it is in a `fromMapEnc({...})` call. It only hides the keys from a
+  glance, a grep or a secret scanner: keep it in a git ignored file or a
+  private repo.
 * Optional constructor parameters: `baseUri` (point at a fake server in
   tests) and `baseClient` (a `package:http` `Client` wrapped by the basic
   auth client - a mock or a memory client).

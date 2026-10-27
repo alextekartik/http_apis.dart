@@ -12,6 +12,7 @@ import 'package:tekartik_stripe_api/src/price_options.dart';
 import 'package:tekartik_stripe_api/src/product_model.dart';
 import 'package:tekartik_stripe_api/src/product_options.dart';
 
+import 'credentials_enc.dart';
 import 'payment_link_model.dart';
 import 'stripe_models.dart';
 import 'subscription.dart';
@@ -35,6 +36,35 @@ class StripeApiCredentials {
   StripeApiCredentials({this.secretKey, this.publishableKey}) {
     assert(secretKey != null || publishableKey != null);
   }
+
+  /// The credentials of their plain map ([toMap]).
+  factory StripeApiCredentials.fromMap(Map<Object?, Object?> map) =>
+      stripeApiCredentialsFromMap(map);
+
+  /// The credentials of their obfuscated map ([toMapEnc]): the content of
+  /// a json written by [toJsonEnc] pasted as it is, a dart map literal too;
+  /// a plain map ([toMap]) is read too.
+  ///
+  /// ```dart
+  /// final credentials = StripeApiCredentials.fromMapEnc({
+  ///   "type": "stripe_credentials_enc",
+  ///   ...
+  /// });
+  /// ```
+  factory StripeApiCredentials.fromMapEnc(Map<Object?, Object?> map) =>
+      stripeApiCredentialsFromMapEnc(map);
+
+  /// The plain map: `publishableKey`, `secretKey`.
+  Map<String, Object?> toMap() => stripeApiCredentialsToMap(this);
+
+  /// The obfuscated map (see [stripeApiCredentialsToMapEnc]).
+  Map<String, Object?> toMapEnc({String? password}) =>
+      stripeApiCredentialsToMapEnc(this, password: password);
+
+  /// The obfuscated map as an indented json, to keep in a git ignored file
+  /// and paste in a [StripeApiCredentials.fromMapEnc] call.
+  String toJsonEnc({String? password}) =>
+      stripeApiCredentialsToJsonEnc(this, password: password);
 
   StripeApiCredentials withoutSecretKey() =>
       StripeApiCredentials(publishableKey: publishableKey);
