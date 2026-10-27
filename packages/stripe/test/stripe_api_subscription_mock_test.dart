@@ -117,6 +117,84 @@ void main() {
       expect(request.bodyFields, {'tax_code': 'txcd_10000000'});
     });
 
+    test('invoices', () async {
+      answer = (_) => {
+        'object': 'list',
+        'has_more': true,
+        'data': [
+          // Since the API version 2025-03-31.
+          {
+            'id': 'in_2',
+            'number': 'CTKLY-0002',
+            'status': 'void',
+            'currency': 'eur',
+            'created': 1792941837,
+            'total': 200,
+            'amount_paid': 0,
+            'customer': 'cus_1',
+            'hosted_invoice_url': 'https://invoice.stripe.com/i/2',
+            'invoice_pdf': 'https://pay.stripe.com/invoice/2/pdf',
+            'total_taxes': [
+              {'amount': 33, 'tax_behavior': 'inclusive'},
+            ],
+            'parent': {
+              'type': 'subscription_details',
+              'subscription_details': {
+                'subscription': 'sub_1',
+                'metadata': {'app': 'contaktly_prod', 'uid': 'uid1'},
+              },
+            },
+            'status_transitions': {'paid_at': null, 'voided_at': 1792941900},
+          },
+          // Before.
+          {
+            'id': 'in_1',
+            'status': 'paid',
+            'tax': 0,
+            'subscription': 'sub_0',
+            'subscription_details': {
+              'metadata': {'app': 'other'},
+            },
+            'status_transitions': {'paid_at': 1792941837},
+          },
+        ],
+      };
+      var list = await api.listInvoices(
+        StripeApiInvoiceListOptions()
+          ..customer.v = 'cus_1'
+          ..status.v = stripeInvoiceStatusVoid
+          ..limit.v = 100
+          ..startingAfter.v = 'in_3',
+      );
+      var request = requests.single;
+      expect(request.method, 'GET');
+      expect(request.url.path, '/v1/invoices');
+      expect(request.url.queryParameters, {
+        'customer': 'cus_1',
+        'status': 'void',
+        'limit': '100',
+        'starting_after': 'in_3',
+      });
+      expect(list.hasMore.v, isTrue);
+      var invoice = list.data.v!.first;
+      expect(invoice.number.v, 'CTKLY-0002');
+      expect(invoice.status.v, stripeInvoiceStatusVoid);
+      expect(invoice.subscriptionId, 'sub_1');
+      expect(invoice.subscriptionMetadata, {
+        'app': 'contaktly_prod',
+        'uid': 'uid1',
+      });
+      expect(invoice.taxAmount, 33);
+      expect(invoice.voidedAtSeconds, 1792941900);
+      expect(invoice.paidAtSeconds, isNull);
+      expect(invoice.invoicePdf.v, 'https://pay.stripe.com/invoice/2/pdf');
+      var legacy = list.data.v!.last;
+      expect(legacy.subscriptionId, 'sub_0');
+      expect(legacy.subscriptionMetadata, {'app': 'other'});
+      expect(legacy.taxAmount, 0);
+      expect(legacy.paidAtSeconds, 1792941837);
+    });
+
     test('prices by lookup keys', () async {
       answer = (_) => {
         'object': 'list',

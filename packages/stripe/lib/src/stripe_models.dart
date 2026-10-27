@@ -7,6 +7,7 @@ import 'package:tekartik_stripe_api/src/stripe_api.dart';
 
 import 'billing_portal.dart';
 import 'checkout_session.dart';
+import 'invoice.dart';
 import 'price_options.dart';
 import 'product_options.dart';
 import 'subscription.dart';
@@ -26,6 +27,11 @@ void initStripeApiModels() {
     cvAddConstructor(StringApiPriceRecurring.new);
     cvAddConstructor(StripeApiProductCreate.new);
     cvAddConstructor(StripeApiProductUpdate.new);
+    cvAddConstructors([
+      StripeApiInvoice.new,
+      StripeApiInvoiceList.new,
+      StripeApiInvoiceListOptions.new,
+    ]);
     cvAddConstructor(StripeApiProductList.new);
     cvAddConstructor(StripeApiProductListOptions.new);
     cvAddConstructors([

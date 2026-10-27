@@ -20,6 +20,7 @@ export 'src/credentials_enc.dart'
         stripeApiCredentialsToJsonEnc,
         stripeApiCredentialsFromMapEnc,
         stripeApiKeyObfuscate;
+export 'src/invoice.dart';
 export 'src/payment_link_model.dart'
     show StripeApiPaymentLink, StripeApiPaymentLinkExt;
 export 'src/payment_link_options.dart'

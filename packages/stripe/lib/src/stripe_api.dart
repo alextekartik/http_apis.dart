@@ -13,6 +13,7 @@ import 'package:tekartik_stripe_api/src/product_model.dart';
 import 'package:tekartik_stripe_api/src/product_options.dart';
 
 import 'credentials_enc.dart';
+import 'invoice.dart';
 import 'payment_link_model.dart';
 import 'stripe_models.dart';
 import 'subscription.dart';
@@ -247,6 +248,19 @@ class StripeApi {
       uri.replace(queryParameters: options.toQueryParameters()),
     );
   }
+
+  /// A page of invoices, newest first (every status unless
+  /// [StripeApiInvoiceListOptions.status]).
+  /// https://docs.stripe.com/api/invoices/list
+  Future<StripeApiInvoiceList> listInvoices(
+    StripeApiInvoiceListOptions options,
+  ) => _get<StripeApiInvoiceList>(
+    _uri('invoices').replace(queryParameters: options.toQueryParameters()),
+  );
+
+  /// Get an invoice.
+  Future<StripeApiInvoice> getInvoice(String invoiceId) =>
+      _get<StripeApiInvoice>(_uri('invoices/$invoiceId'));
 
   /// A Checkout Session, its url to open.
   /// https://docs.stripe.com/api/checkout/sessions/create

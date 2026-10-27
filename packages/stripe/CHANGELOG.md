@@ -1,3 +1,10 @@
+## 1.4.0
+
+- Invoices: `listInvoices` (`StripeApiInvoiceListOptions`: customer,
+  subscription, status, page), `getInvoice`, `StripeApiInvoice` (its
+  subscription, metadata and tax read before and after the API version
+  2025-03-31).
+
 ## 1.3.0
 
 - Checkout Session: `automaticTax` (Stripe Tax), `billingAddressCollection`,
