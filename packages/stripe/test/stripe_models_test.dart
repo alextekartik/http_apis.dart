@@ -122,14 +122,19 @@ void main() {
   test('StripeApiProduct', () {
     expect(
       (newModel().cv<StripeApiProduct>()..fillModel(apiFillOptions)).toMap(),
-      {'id': 'text_1', 'name': 'text_2', 'description': 'text_3'},
+      {
+        'id': 'text_1',
+        'name': 'text_2',
+        'description': 'text_3',
+        'tax_code': 'text_4',
+      },
     );
   });
   test('StripeApiProductCreate', () {
     expect(
       (newModel().cv<StripeApiProductCreate>()..fillModel(apiFillOptions))
           .toMap(),
-      {'name': 'text_1', 'description': 'text_2'},
+      {'name': 'text_1', 'description': 'text_2', 'tax_code': 'text_3'},
     );
   });
   test('StripeApiPaymentLink', () {

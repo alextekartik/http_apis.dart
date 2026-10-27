@@ -25,6 +25,7 @@ void initStripeApiModels() {
     cvAddConstructor(StripeApiPriceCreate.new);
     cvAddConstructor(StringApiPriceRecurring.new);
     cvAddConstructor(StripeApiProductCreate.new);
+    cvAddConstructor(StripeApiProductUpdate.new);
     cvAddConstructor(StripeApiProductList.new);
     cvAddConstructor(StripeApiProductListOptions.new);
     cvAddConstructors([
@@ -35,6 +36,9 @@ void initStripeApiModels() {
       StripeApiCheckoutLineItem.new,
       StripeApiCheckoutSubscriptionData.new,
       StripeApiCheckoutConsentCollection.new,
+      StripeApiCheckoutAutomaticTax.new,
+      StripeApiCheckoutTaxIdCollection.new,
+      StripeApiCheckoutCustomerUpdate.new,
       StripeApiCheckoutSessionCreate.new,
       StripeApiCheckoutSession.new,
       StripeApiBillingPortalSessionCreate.new,

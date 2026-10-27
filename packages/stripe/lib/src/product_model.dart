@@ -25,8 +25,11 @@ class StripeApiProduct extends CvModelBase {
   final id = CvField<String>('id');
   final name = CvField<String>('name');
   final description = CvField<String>('description');
+
+  /// The tax code of Stripe Tax, null for the account's default.
+  final taxCode = CvField<String>('tax_code');
   @override
-  List<CvField<Object?>> get fields => [id, name, description];
+  List<CvField<Object?>> get fields => [id, name, description, taxCode];
 }
 
 /// https://stripe.com/docs/api/products/create

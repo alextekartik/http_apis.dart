@@ -209,6 +209,16 @@ class StripeApi {
     return _send<StripeApiProduct>(uri, bodyFields);
   }
 
+  /// Update a product (its tax code...).
+  /// https://docs.stripe.com/api/products/update
+  Future<StripeApiProduct> updateProduct(
+    String productId,
+    StripeApiProductUpdate options,
+  ) => _send<StripeApiProduct>(
+    _uri('products/$productId'),
+    options.toStripeApiBodyFields(),
+  );
+
   /// Get a product.
   Future<StripeApiProduct> getProduct(String productId) async {
     var uri = _uri('products/$productId');

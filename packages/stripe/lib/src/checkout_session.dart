@@ -41,6 +41,40 @@ class StripeApiCheckoutConsentCollection extends CvModelBase {
   CvFields get fields => [termsOfService];
 }
 
+/// `automatic_tax` of a Checkout Session: the tax computed by Stripe Tax
+/// from the customer's address (Stripe Tax set up in the dashboard).
+class StripeApiCheckoutAutomaticTax extends CvModelBase {
+  /// true to compute the tax.
+  final enabled = CvField<bool>('enabled');
+
+  @override
+  CvFields get fields => [enabled];
+}
+
+/// `tax_id_collection` of a Checkout Session: a business customer may give
+/// its tax id (an EU VAT number).
+class StripeApiCheckoutTaxIdCollection extends CvModelBase {
+  /// true to offer it.
+  final enabled = CvField<bool>('enabled');
+
+  @override
+  CvFields get fields => [enabled];
+}
+
+/// `customer_update` of a Checkout Session for an existing customer: what
+/// Checkout saves on it, `auto` (needed by the automatic tax and the tax id
+/// collection) or `never`.
+class StripeApiCheckoutCustomerUpdate extends CvModelBase {
+  /// The address given.
+  final address = CvField<String>('address');
+
+  /// The name given (the business name with a tax id).
+  final name = CvField<String>('name');
+
+  @override
+  CvFields get fields => [address, name];
+}
+
 /// https://docs.stripe.com/api/checkout/sessions/create
 class StripeApiCheckoutSessionCreate extends CvModelBase
     with StripeApiMetadataMixin {
@@ -81,6 +115,26 @@ class StripeApiCheckoutSessionCreate extends CvModelBase
   /// Promotion codes allowed.
   final allowPromotionCodes = CvField<bool>('allow_promotion_codes');
 
+  /// The tax computed by Stripe Tax.
+  final automaticTax = CvModelField<StripeApiCheckoutAutomaticTax>(
+    'automatic_tax',
+  );
+
+  /// `auto` (only when needed, by the tax for instance) or `required`.
+  final billingAddressCollection = CvField<String>(
+    'billing_address_collection',
+  );
+
+  /// What Checkout saves on the existing [customer].
+  final customerUpdate = CvModelField<StripeApiCheckoutCustomerUpdate>(
+    'customer_update',
+  );
+
+  /// The tax id of a business customer.
+  final taxIdCollection = CvModelField<StripeApiCheckoutTaxIdCollection>(
+    'tax_id_collection',
+  );
+
   @override
   CvFields get fields => [
     mode,
@@ -94,6 +148,10 @@ class StripeApiCheckoutSessionCreate extends CvModelBase
     subscriptionData,
     consentCollection,
     allowPromotionCodes,
+    automaticTax,
+    billingAddressCollection,
+    customerUpdate,
+    taxIdCollection,
     ...metadataMixinFields,
   ];
 }

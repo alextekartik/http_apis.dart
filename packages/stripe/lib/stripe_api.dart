@@ -37,7 +37,8 @@ export 'src/price_options.dart'
         StripeApiPriceUpdate;
 export 'src/product_model.dart'
     show StripeApiProduct, StripeApiProductListOptions, StripeApiProductList;
-export 'src/product_options.dart' show StripeApiProductCreate;
+export 'src/product_options.dart'
+    show StripeApiProductCreate, StripeApiProductUpdate;
 export 'src/stripe_api.dart'
     show StripeApi, StripeApiCredentials, debugStripeApi;
 export 'src/stripe_models.dart'

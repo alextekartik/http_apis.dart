@@ -1,3 +1,9 @@
+## 1.3.0
+
+- Checkout Session: `automaticTax` (Stripe Tax), `billingAddressCollection`,
+  `customerUpdate`, `taxIdCollection`.
+- Products: `taxCode`, `updateProduct` (`StripeApiProductUpdate`).
+
 ## 1.2.0
 
 - `StripeApiCredentials.toMapEnc` / `fromMapEnc`: the credentials as an

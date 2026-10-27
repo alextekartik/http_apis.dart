@@ -75,6 +75,48 @@ void main() {
       });
     });
 
+    test('checkout session, tax', () async {
+      answer = (_) => {'id': 'cs_test_2', 'url': 'https://checkout.stripe.com'};
+      await api.createCheckoutSession(
+        StripeApiCheckoutSessionCreate()
+          ..mode.v = stripeCheckoutModeSubscription
+          ..customer.v = 'cus_1'
+          ..automaticTax.v = (StripeApiCheckoutAutomaticTax()..enabled.v = true)
+          ..billingAddressCollection.v = 'auto'
+          ..customerUpdate.v = (StripeApiCheckoutCustomerUpdate()
+            ..address.v = 'auto'
+            ..name.v = 'auto')
+          ..taxIdCollection.v = (StripeApiCheckoutTaxIdCollection()
+            ..enabled.v = true),
+      );
+      expect(requests.single.bodyFields, {
+        'mode': 'subscription',
+        'customer': 'cus_1',
+        'automatic_tax[enabled]': 'true',
+        'billing_address_collection': 'auto',
+        'customer_update[address]': 'auto',
+        'customer_update[name]': 'auto',
+        'tax_id_collection[enabled]': 'true',
+      });
+    });
+
+    test('product tax code', () async {
+      answer = (_) => {
+        'id': 'prod_1',
+        'name': 'Plan',
+        'tax_code': 'txcd_10000000',
+      };
+      var product = await api.updateProduct(
+        'prod_1',
+        StripeApiProductUpdate()..taxCode.v = 'txcd_10000000',
+      );
+      expect(product.taxCode.v, 'txcd_10000000');
+      var request = requests.single;
+      expect(request.method, 'POST');
+      expect(request.url.path, '/v1/products/prod_1');
+      expect(request.bodyFields, {'tax_code': 'txcd_10000000'});
+    });
+
     test('prices by lookup keys', () async {
       answer = (_) => {
         'object': 'list',
