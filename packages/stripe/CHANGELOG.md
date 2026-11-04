@@ -1,3 +1,9 @@
+## 1.5.0
+
+- Webhook event constants: `stripeEventCheckoutSessionExpired`,
+  `stripeEventCheckoutSessionAsyncPaymentFailed`,
+  `stripeEventCheckoutSessionAsyncPaymentSucceeded`.
+
 ## 1.4.0
 
 - Invoices: `listInvoices` (`StripeApiInvoiceListOptions`: customer,

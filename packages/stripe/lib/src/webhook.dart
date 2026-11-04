@@ -8,6 +8,17 @@ import 'stripe_models.dart';
 /// Checkout completed.
 const stripeEventCheckoutSessionCompleted = 'checkout.session.completed';
 
+/// Checkout expired unpaid.
+const stripeEventCheckoutSessionExpired = 'checkout.session.expired';
+
+/// A delayed payment method failed (checkout completed unpaid before).
+const stripeEventCheckoutSessionAsyncPaymentFailed =
+    'checkout.session.async_payment_failed';
+
+/// A delayed payment method succeeded (checkout completed unpaid before).
+const stripeEventCheckoutSessionAsyncPaymentSucceeded =
+    'checkout.session.async_payment_succeeded';
+
 /// A subscription made.
 const stripeEventCustomerSubscriptionCreated = 'customer.subscription.created';
 

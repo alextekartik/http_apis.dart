@@ -1,6 +1,6 @@
 name: tekartik_stripe_api
 description: A starting point for Dart libraries or applications.
-version: 1.4.0
+version: 1.5.0
 publish_to: none
 
 environment:
