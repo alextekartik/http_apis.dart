@@ -23,7 +23,10 @@ class MailjetCredentials {
   MailjetCredentials(this.apiKey, this.apiSecret);
 }
 
-/// The main client
+/// The Mailjet client: basic auth with the API key and secret key.
+///
+/// [close] also closes the `client` given to the constructor. Errors throw
+/// an `HttpClientException` (`package:tekartik_http/http_client.dart`).
 class MailjetClient {
   final _debug = debugMailjet;
   late final MailjetCredentials credentials;

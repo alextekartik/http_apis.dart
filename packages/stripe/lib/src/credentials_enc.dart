@@ -141,8 +141,10 @@ StripeApiCredentials stripeApiCredentialsFromMapEnc(Map<Object?, Object?> map) {
     if (shown is String &&
         (key == null ||
             stripeApiKeyObfuscate(key, showEnds: showEnds) != shown)) {
+      // [shown] may be a plain key: quote its obfuscated form only.
       throw FormatException(
-        'The obfuscated Stripe credentials do not hold the $name $shown',
+        'The obfuscated Stripe credentials do not hold the $name '
+        '${stripeApiKeyObfuscate(shown, showEnds: showEnds)}',
       );
     }
   }

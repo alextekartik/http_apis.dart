@@ -206,6 +206,8 @@ class StripeWebhookSignature {
 
   /// True when [header] signs [payload] with [secret] and its timestamp is
   /// within [tolerance] of [now] (replay protection).
+  ///
+  /// An empty [secret] never verifies (anyone can sign with an empty key).
   static bool verify({
     required String payload,
     required String? header,
@@ -213,6 +215,9 @@ class StripeWebhookSignature {
     DateTime? now,
     Duration tolerance = const Duration(minutes: 5),
   }) {
+    if (secret.isEmpty) {
+      return false;
+    }
     var parsed = parse(header);
     if (parsed == null) {
       return false;

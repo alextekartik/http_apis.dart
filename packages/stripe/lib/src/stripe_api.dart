@@ -19,6 +19,8 @@ import 'stripe_models.dart';
 import 'subscription.dart';
 import 'webhook.dart';
 
+/// Prints every request and answer body (the signing secret of a new
+/// webhook endpoint included): development only.
 var debugStripeApi = false;
 final stripeApiUrlBase = Uri.parse('https://api.stripe.com/v1');
 void _log(Object? message) {
@@ -29,7 +31,9 @@ void _log(Object? message) {
 const httpContentTypeWwwFormUrlEncoded =
     'application/x-www-form-urlencoded'; //; charset=utf-8';
 
-/// One (secret or publishable) is needed only
+/// The Stripe keys: the secret key (`sk_...`, server side only) is the one
+/// every endpoint here needs; a publishable key alone is for client side
+/// uses. At least one of the two.
 class StripeApiCredentials {
   final String? secretKey;
   final String? publishableKey;
@@ -79,7 +83,10 @@ typedef StripeApiBodyFields = Map<String, String>;
 // ignore: prefer_collection_literals
 StripeApiBodyFields newStripeApiBodyFields() => StripeApiBodyFields();
 
-/// Stripe API client
+/// Stripe API client: the key is sent as basic auth.
+///
+/// [baseClient] (a mock, a memory client) and [baseUri] are for tests.
+/// Call [close] when done.
 class StripeApi {
   final StripeApiCredentials credentials;
 
@@ -102,6 +109,17 @@ class StripeApi {
 
   Uri _uri(String path) =>
       _stripeApiUrlBase.replace(path: url.join(_stripeApiUrlBase.path, path));
+
+  /// [id] as a single path segment.
+  ///
+  /// Throws an [ArgumentError] for an empty, `.` or `..` id: the uri would
+  /// drop it and reach another endpoint (`subscriptions/../customers/x`).
+  String _pathId(String id) {
+    if (id.isEmpty || id == '.' || id == '..') {
+      throw ArgumentError.value(id, 'id', 'Not a Stripe object id');
+    }
+    return Uri.encodeComponent(id);
+  }
 
   /// POST [bodyFields] (form url encoded).
   Future<T> _send<T extends CvModel>(Uri uri, StripeApiBodyFields bodyFields) =>
@@ -166,14 +184,14 @@ class StripeApi {
     String paymentLinkId,
     StripeApiPaymentLinkUpdate options,
   ) async {
-    var uri = _uri('payment_links/$paymentLinkId');
+    var uri = _uri('payment_links/${_pathId(paymentLinkId)}');
     var bodyFields = options.toStripeApiBodyFields();
     return _send<StripeApiPaymentLink>(uri, bodyFields);
   }
 
   /// Get a payment link.
   Future<StripeApiPaymentLink> getPaymentLink(String paymentLinkId) async {
-    var uri = _uri('payment_links/$paymentLinkId');
+    var uri = _uri('payment_links/${_pathId(paymentLinkId)}');
     return _get<StripeApiPaymentLink>(uri);
   }
 
@@ -191,14 +209,14 @@ class StripeApi {
     String priceId,
     StripeApiPriceUpdate options,
   ) async {
-    var uri = _uri('prices/$priceId');
+    var uri = _uri('prices/${_pathId(priceId)}');
     var bodyFields = options.toStripeApiBodyFields();
     return _send<StripeApiPrice>(uri, bodyFields);
   }
 
   /// Get a price.
   Future<StripeApiPrice> getPrice(String priceId) async {
-    var uri = _uri('prices/$priceId');
+    var uri = _uri('prices/${_pathId(priceId)}');
 
     return _get<StripeApiPrice>(uri);
   }
@@ -215,14 +233,14 @@ class StripeApi {
   Future<StripeApiProduct> updateProduct(
     String productId,
     StripeApiProductUpdate options,
-  ) => _send<StripeApiProduct>(
-    _uri('products/$productId'),
+  ) async => _send<StripeApiProduct>(
+    _uri('products/${_pathId(productId)}'),
     options.toStripeApiBodyFields(),
   );
 
   /// Get a product.
   Future<StripeApiProduct> getProduct(String productId) async {
-    var uri = _uri('products/$productId');
+    var uri = _uri('products/${_pathId(productId)}');
 
     return _get<StripeApiProduct>(uri);
   }
@@ -259,8 +277,8 @@ class StripeApi {
   );
 
   /// Get an invoice.
-  Future<StripeApiInvoice> getInvoice(String invoiceId) =>
-      _get<StripeApiInvoice>(_uri('invoices/$invoiceId'));
+  Future<StripeApiInvoice> getInvoice(String invoiceId) async =>
+      _get<StripeApiInvoice>(_uri('invoices/${_pathId(invoiceId)}'));
 
   /// A Checkout Session, its url to open.
   /// https://docs.stripe.com/api/checkout/sessions/create
@@ -272,8 +290,10 @@ class StripeApi {
   );
 
   /// Get a Checkout Session.
-  Future<StripeApiCheckoutSession> getCheckoutSession(String sessionId) =>
-      _get<StripeApiCheckoutSession>(_uri('checkout/sessions/$sessionId'));
+  Future<StripeApiCheckoutSession> getCheckoutSession(String sessionId) async =>
+      _get<StripeApiCheckoutSession>(
+        _uri('checkout/sessions/${_pathId(sessionId)}'),
+      );
 
   /// A customer portal session, its url to open.
   /// https://docs.stripe.com/api/customer_portal/sessions/create
@@ -304,23 +324,28 @@ class StripeApi {
 
   /// Get a subscription.
   /// https://docs.stripe.com/api/subscriptions/retrieve
-  Future<StripeApiSubscription> getSubscription(String subscriptionId) =>
-      _get<StripeApiSubscription>(_uri('subscriptions/$subscriptionId'));
+  Future<StripeApiSubscription> getSubscription(String subscriptionId) async =>
+      _get<StripeApiSubscription>(
+        _uri('subscriptions/${_pathId(subscriptionId)}'),
+      );
 
   /// Update a subscription (cancel at the end of the period, or not).
   /// https://docs.stripe.com/api/subscriptions/update
   Future<StripeApiSubscription> updateSubscription(
     String subscriptionId,
     StripeApiSubscriptionUpdate options,
-  ) => _send<StripeApiSubscription>(
-    _uri('subscriptions/$subscriptionId'),
+  ) async => _send<StripeApiSubscription>(
+    _uri('subscriptions/${_pathId(subscriptionId)}'),
     options.toStripeApiBodyFields(),
   );
 
   /// Cancel a subscription now.
   /// https://docs.stripe.com/api/subscriptions/cancel
-  Future<StripeApiSubscription> cancelSubscription(String subscriptionId) =>
-      _delete<StripeApiSubscription>(_uri('subscriptions/$subscriptionId'));
+  Future<StripeApiSubscription> cancelSubscription(
+    String subscriptionId,
+  ) async => _delete<StripeApiSubscription>(
+    _uri('subscriptions/${_pathId(subscriptionId)}'),
+  );
 
   /// A webhook endpoint, its signing secret in the answer only.
   /// https://docs.stripe.com/api/webhook_endpoints/create
@@ -340,7 +365,7 @@ class StripeApi {
   /// Delete a webhook endpoint.
   Future<void> deleteWebhookEndpoint(String webhookEndpointId) async {
     await _delete<StripeApiWebhookEndpoint>(
-      _uri('webhook_endpoints/$webhookEndpointId'),
+      _uri('webhook_endpoints/${_pathId(webhookEndpointId)}'),
     );
   }
 

@@ -58,9 +58,9 @@ through `.v`.
 * Response: `response.messages.v` is a list of `CvMailjetMessageResponse`
   aligned with the request messages, each with `status` (`'success'` or
   `'error'`) and `to`, a list of `CvMailjetRecipientResponse`
-  (`email`, `messageId`, `messageHref`). Mailjet answers `200` with a
-  per-message `status`, so always check `status.v`, not just the absence of an
-  exception.
+  (`email`, `messageId`, `messageHref`). Always check `status.v`, not just
+  the absence of an exception; an answer with an error status (an invalid
+  message) throws instead (below).
 * Transport failures (401 on wrong credentials, 4xx/5xx) throw
   `HttpClientException` from `package:tekartik_http/http_client.dart`
   (also a `package:http` `ClientException`): read `e.statusCode` and

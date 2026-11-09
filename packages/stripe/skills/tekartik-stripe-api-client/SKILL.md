@@ -20,13 +20,16 @@ description: >-
   (StripeApiSubscription, cancel_at_period_end, currentPeriodEndSeconds),
   webhook endpoints (createWebhookEndpoint, listWebhookEndpoints), webhook
   events (StripeApiEvent, stripeEvent* constants) and their signature
-  (StripeWebhookSignature.verify).
+  (StripeWebhookSignature.verify); invoices (listInvoices, getInvoice,
+  StripeApiInvoice); Stripe errors (HttpClientException) and the obfuscated
+  credentials (toMapEnc, toJsonEnc, fromMapEnc).
 ---
 
 # Stripe products, prices and payment links (tekartik_stripe_api)
 
 `tekartik_stripe_api` is a small subset of the Stripe REST API v1
-(`https://api.stripe.com/v1`) covering products, prices and payment links.
+(`https://api.stripe.com/v1`) covering products, prices, payment links,
+Checkout Sessions, the customer portal, subscriptions, invoices and webhooks.
 Requests are `cv` models flattened into `application/x-www-form-urlencoded`
 body fields; responses are parsed back into `cv` models, so every field is
 read and written through `.v`.
@@ -74,17 +77,20 @@ read and written through `.v`.
   `getCheckoutSession`; `createBillingPortalSession`,
   `createBillingPortalConfiguration`, `listBillingPortalConfigurations`;
   `getSubscription`, `updateSubscription`, `cancelSubscription` (DELETE);
-  `createWebhookEndpoint`, `listWebhookEndpoints`, `deleteWebhookEndpoint`.
-  Anything else (customers, refunds, invoices) is not wrapped: call the
-  Stripe API yourself.
+  `createWebhookEndpoint`, `listWebhookEndpoints`, `deleteWebhookEndpoint`;
+  `listInvoices`, `getInvoice`. Anything else (customers, refunds) is not
+  wrapped: call the Stripe API yourself. An id is sent as one path segment
+  (encoded); an empty, `.` or `..` id throws an `ArgumentError`.
 * Subscriptions: recurring prices with a `lookupKey` (find them back with
   `listPrices(StripeApiPriceListOptions()..lookupKeys.v = [...])`), a
   Checkout Session in `stripeCheckoutModeSubscription` mode
   (`clientReferenceId` = your user id, `subscriptionData.metadata`,
   `successUrl` / `cancelUrl`), then a webhook: verify the raw body with
   `StripeWebhookSignature.verify(payload:, header: <Stripe-Signature>,
-  secret: <whsec_...>)`, parse `StripeApiEvent` and its `object`
-  (`StripeApiCheckoutSession`, `StripeApiSubscription`). The period end of a
+  secret: <whsec_...>)` (the raw body as received; an empty secret never
+  verifies; 5 minutes of tolerance), parse `StripeApiEvent` and its `object`
+  (`StripeApiCheckoutSession`, `StripeApiSubscription`). Stripe can send an
+  event twice: dedupe on `event.id.v`. The period end of a
   subscription moved to its items in the API version 2025-03-31:
   `currentPeriodEndSeconds` reads either. `StripeApiSubscriptionUpdate
   ..cancelAtPeriodEnd.v = true` ends it at the end of the period.
@@ -113,15 +119,18 @@ read and written through `.v`.
   `Map<String, Object?>`): `..metadata.v = {'orderId': '123'}` is flattened to
   `metadata[orderId]=123`. Use it to correlate Stripe objects with your own
   ids; it is echoed back on read.
-* **There is no error handling in this client.** A 4xx from Stripe is parsed
-  like a success, so you get a model whose fields are all null instead of an
-  exception. After every call assert on what you need
-  (`price.id.v`, `link.url.v`) and treat null as a failure; set the top-level
-  `debugStripeApi = true` to print the request uri, the body fields and the
-  raw response (never in production, it prints the request payload).
+* Errors: a non 2xx answer throws an `HttpClientException`
+  (`package:tekartik_http/http_client.dart`): `e.statusCode`, and
+  `e.response.body` holds Stripe's `{"error": {"type", "message"...}}`. The
+  top-level `debugStripeApi = true` prints the request uri, the body fields
+  and the raw answer: never in production (it prints the signing secret of a
+  new webhook endpoint, customer emails...).
+* No `Idempotency-Key` header is sent: a `create...` retried after a
+  timeout can create the object twice; check before retrying.
 * Only the declared fields survive a round trip: `StripeApiProduct` is
-  `id`/`name`/`description`, `StripeApiPrice` is `id`, `nickname`, `active`,
-  `productId`, `currency`, `amount`, `recurring`, `metadata`. Everything else
+  `id`/`name`/`description`/`taxCode`, `StripeApiPrice` is `id`, `nickname`,
+  `active`, `productId`, `currency`, `amount`, `recurring`, `lookupKey`,
+  `taxBehavior`, `metadata`. Everything else
   Stripe returns (`livemode`, `created`, `object`, ...) is dropped silently.
 * `listProducts(StripeApiProductListOptions()..limit.v = 100)` returns a
   `StripeApiProductList` with `data` and `hasMore`; paginate by setting

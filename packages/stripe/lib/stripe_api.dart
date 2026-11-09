@@ -1,6 +1,10 @@
-/// Support for doing something awesome.
+/// A typed client of the Stripe REST API v1 for server side Dart.
 ///
-/// More dartdocs go here.
+/// Create a [StripeApi] with a secret key, call its endpoints with the `cv`
+/// option models (`StripeApiPriceCreate`, `StripeApiCheckoutSessionCreate`...)
+/// and read the answer models through `field.v`. A non 2xx answer throws an
+/// `HttpClientException` (`package:tekartik_http/http_client.dart`).
+/// Webhooks: [StripeWebhookSignature.verify] then [StripeApiEvent].
 library;
 
 export 'src/api_options.dart' show StripeApiMetadata;
