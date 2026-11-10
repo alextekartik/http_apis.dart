@@ -1,4 +1,6 @@
 concurrency: 1
+# vm: the mock and model tests (run_ci runs them in CI); chrome: the JSONP
+# tests, local only (deezer_api_test.dart reads the real api.deezer.com).
 platforms:
+  - vm
   - chrome
-#  - vm

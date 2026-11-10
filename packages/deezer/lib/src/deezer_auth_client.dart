@@ -135,11 +135,16 @@ class DeezerAuthClient extends http.BaseClient {
     );
   }
 
+  /// The token the requests use: the access token given, or the one the code
+  /// was exchanged for (exchanged once, then kept: a code is valid once).
+  ///
+  /// Null without token nor code, or when the exchange failed.
   Future<String?> getAccessToken() async {
-    if (api.code == null) {
-      return api.accessToken;
+    try {
+      return await _authTokenOrNull();
+    } on DeezerApiException {
+      return null;
     }
-    return (await _exchangeCode()).accessToken;
   }
 
   Future<String> readString(Uri uri) async {

@@ -8,7 +8,8 @@ description: >-
   DeezerArtist, DeezerAlbum, DeezerTrack, DeezerPlaylist,
   DeezerPlaylistTracks, DeezerUser, DeezerError, DeezerAppInfo, error
   handling with DeezerApiException, OAuth with DeezerApiOptions and
-  accessToken, and the jsonp/CORS workaround on the web (useJsonp).
+  accessToken (a code exchanged once), paged lists (25 per page), and the
+  jsonp/CORS workaround on the web (useJsonp).
 ---
 
 # Deezer API client (tekartik_deezer_api)
@@ -50,9 +51,12 @@ v2.0 (`https://api.deezer.com/2.0`). Responses are decoded into `cv` models
   token, or `DeezerApi(code: '<oauth-code>', options: DeezerApiOptions(appId:,
   appSecret:, redirectUri:))` to let the client exchange the OAuth code
   (`connect.deezer.com/oauth/access_token.php`) on the first call.
-  `getAccessToken()` returns the resulting token (null if the exchange
-  failed). Keep `appSecret` out of the source: read it from an environment
-  variable or an untracked file.
+  A code is valid once: the client exchanges it once and keeps the token;
+  `getAccessToken()` returns that token (exchanging the code if no call did
+  yet; null if the exchange failed). Build later clients with
+  `accessToken:`, not with the same code. Keep `appSecret` out of the
+  source (read it from an environment variable or an untracked file) and
+  out of web and mobile apps: the exchange belongs on a server.
 * The models keep only a few fields of each Deezer object:
   `DeezerArtist` = `id`, `name`, `picture`, `pictureSmall` (56x56),
   `pictureMedium` (250x250); `DeezerAlbum` = `id`, `title`, `coverSmall`,
@@ -61,6 +65,10 @@ v2.0 (`https://api.deezer.com/2.0`). Responses are decoded into `cv` models
   `picture`, `pictureSmall`, `pictureMedium`, `tracks`;
   `DeezerUser` = `id`, `name`. Ids are strings even though Deezer sends
   integers. Read values with `.v` (nullable), sub models with `.v!`.
+* Paging: Deezer lists come 25 at a time (`total`, `next`).
+  `getUserPlaylists` / `getMyPlaylists` return the first 25 only; read the
+  next pages with `readAny(Uri.parse('https://api.deezer.com/2.0/user/<id>/playlists?index=25'))`
+  and so on.
 * Playlist tracks: `getPlaylist(id)` fills `playlist.tracks.v!.list.v!`
   (a `List<DeezerTrack>`) from the embedded `tracks.data`. `getPlaylistTracks`
   hits `playlist/<id>/tracks`, whose response is `{"data": [...]}` with no
@@ -78,17 +86,23 @@ v2.0 (`https://api.deezer.com/2.0`). Responses are decoded into `cv` models
 * Web/CORS: on a browser target `useJsonp` defaults to `true` (from
   `needJsonp`) and requests go through a jsonp `<script>` tag with
   `output=jsonp` (`uri.withJsonp()`), because api.deezer.com sends no CORS
-  headers. Jsonp cannot carry the access token, so on the web only the public
-  endpoints work; do authenticated calls from a server or from native.
+  headers. On the web `getMe` / `getUser` put the access token in the JSONP
+  url, but `getUserPlaylists`, `getMyPlaylists` and `readAny` do not (they
+  answer an `OAuthException`), and the code exchange cannot run there: do
+  authenticated calls from a server or from native.
   Forcing `DeezerApi(useJsonp: false)` on the web makes every call fail on
   CORS, and `useJsonp: true` on the VM throws `UnsupportedError`.
 * Debugging: set the top-level `debugDeezerApi = true` to print every uri,
-  response and error.
+  response and error (the token and the app secret of the code exchange
+  included: not in production logs).
 * Tests: model/json tests run anywhere, but call `initDeezerCvBuilders()` in
   `setUpAll` (or at the top of `main`) before any `.cv<DeezerTrack>()` when no
-  `DeezerApi` has been created. Tests that really hit Deezer must be
-  `@TestOn('browser')` and run with `dart test -p chrome` (that is what this
-  package's `dart_test.yaml` does), since jsonp is the only way in.
+  `DeezerApi` has been created. Mock the http layer with
+  `http.runWithClient(body, () => MockClient(...))` (`package:http/testing.dart`):
+  every client of the package, the code exchange included, is the mock (what
+  `test/deezer_auth_mock_test.dart` does, on the VM and in Chrome). Tests that
+  really hit Deezer are `@TestOn('browser')` (JSONP), run locally with
+  `dart test -p chrome`; CI runs the VM ones.
 
 ## Examples
 
@@ -192,12 +206,14 @@ Future<String?> exchange(String code) async {
       redirectUri: 'https://example.com/deezer/callback',
     ),
   );
+  // Exchanges the code (once) and keeps the token.
   var accessToken = await api.getAccessToken();
   if (accessToken == null) {
     throw StateError('code exchange failed (expired or wrong app secret)');
   }
-  // The same api instance is now authenticated.
+  // The same api instance is now authenticated (the code is not reused).
   print((await api.getMe()).name.v);
+  // Store accessToken, later clients use DeezerApi(accessToken: ...).
   return accessToken;
 }
 ```
