@@ -1,6 +1,7 @@
 import 'package:cv/cv.dart';
 import 'package:tekartik_stripe_api/src/price_options.dart';
 
+import 'line_item.dart';
 import 'payment_link_options.dart';
 
 //
@@ -74,12 +75,21 @@ class StripeApiPaymentLink extends CvModelBase
   /// Livemode.
   final livemode = CvField<bool>('livemode');
 
+  /// The line items as read, when expanded (`expand: ['data.line_items']`
+  /// in a list): their price gives the only date of a link (a Payment Link
+  /// has no `created`). [lineItems] is the creation form, never read.
+  final lineItemList = CvModelField<StripeApiLineItemList>('line_items');
+
   @override
   List<CvField<Object?>> get fields => [
     id,
     url,
     livemode,
-    ...createUpdateMixinFields,
+    metadata,
+    subscriptionData,
+    active,
+    restrictions,
+    lineItemList,
   ];
 }
 

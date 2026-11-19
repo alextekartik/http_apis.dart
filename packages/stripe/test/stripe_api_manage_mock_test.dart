@@ -142,6 +142,53 @@ void main() {
     );
     expect(requests.last.url.queryParameters, {'active': 'false'});
     expect(links.data.v!.single.active.v, isFalse);
+
+    // Expanded line items: the price date (a link has no created date),
+    // the paid count of a link paid once.
+    answer = (_) => {
+      'has_more': true,
+      'data': [
+        {
+          'id': 'plink_2',
+          'restrictions': {
+            'completed_sessions': {'count': 1, 'limit': 1},
+          },
+          'line_items': {
+            'object': 'list',
+            'has_more': false,
+            'data': [
+              {
+                'id': 'li_1',
+                'description': 'Book',
+                'quantity': 2,
+                'amount_total': 2000,
+                'price': {
+                  'id': 'price_1',
+                  'created': 1700000000,
+                  'nickname': 'Book Doe',
+                  'product': 'prod_1',
+                },
+              },
+            ],
+          },
+        },
+      ],
+    };
+    links = await api.listPaymentLinks(
+      StripeApiPaymentLinkListOptions()
+        ..limit.v = 50
+        ..expand.v = ['data.line_items'],
+    );
+    expect(requests.last.url.queryParametersAll, {
+      'limit': ['50'],
+      'expand[]': ['data.line_items'],
+    });
+    var expanded = links.data.v!.single;
+    expect(expanded.restrictions.v!.completedSessions.v!.count.v, 1);
+    var item = expanded.lineItemList.v!.data.v!.single;
+    expect(item.quantity.v, 2);
+    expect(item.price.v!.created.v, 1700000000);
+    expect(item.price.v!.nickname.v, 'Book Doe');
   });
 
   test('products: create with a default price, archive, delete', () async {

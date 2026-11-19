@@ -29,8 +29,11 @@ class StripeApiPaymentLinkCompletedSessions extends CvModelBase {
   /// a link made for one order).
   final limit = CvField<int>('limit');
 
+  /// The completed payments so far (read only).
+  final count = CvField<int>('count');
+
   @override
-  List<CvField<Object?>> get fields => [limit];
+  List<CvField<Object?>> get fields => [limit, count];
 }
 
 /// `restrictions` of a Payment Link.

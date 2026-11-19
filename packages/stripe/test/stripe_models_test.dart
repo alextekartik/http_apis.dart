@@ -166,14 +166,39 @@ void main() {
       'id': 'text_1',
       'url': 'text_2',
       'livemode': false,
-      'line_items': [
-        {'price': 'text_4', 'quantity': 5},
-      ],
-      'metadata': {'field_1': 6},
-      'subscription_data': {'description': 'text_7'},
+      'metadata': {'field_1': 4},
+      'subscription_data': {'description': 'text_5'},
       'active': true,
       'restrictions': {
-        'completed_sessions': {'limit': 9},
+        'completed_sessions': {'limit': 7, 'count': 8},
+      },
+      'line_items': {
+        'data': [
+          {
+            'id': 'text_9',
+            'description': 'text_10',
+            'quantity': 11,
+            'amount_total': 12,
+            'amount_subtotal': 13,
+            'currency': 'text_14',
+            'price': {
+              'id': 'text_15',
+              'type': 'text_16',
+              'created': 17,
+              'livemode': true,
+              'nickname': 'text_19',
+              'active': true,
+              'product': 'text_21',
+              'currency': 'text_22',
+              'unit_amount': 23,
+              'recurring': {'interval': 'text_24', 'interval_count': 25},
+              'lookup_key': 'text_26',
+              'tax_behavior': 'text_27',
+              'metadata': {'field_1': 28},
+            },
+          },
+        ],
+        'has_more': false,
       },
     });
     expect(
@@ -215,7 +240,7 @@ void main() {
       'subscription_data': {'description': 'text_4'},
       'active': false,
       'restrictions': {
-        'completed_sessions': {'limit': 6},
+        'completed_sessions': {'limit': 6, 'count': 7},
       },
     });
     expect(
@@ -229,7 +254,7 @@ void main() {
         'subscription_data': {'description': 'text_4'},
         'active': false,
         'restrictions': {
-          'completed_sessions': {'limit': 6},
+          'completed_sessions': {'limit': 6, 'count': 7},
         },
       },
     );
@@ -237,14 +262,39 @@ void main() {
       'id': 'text_1',
       'url': 'text_2',
       'livemode': false,
-      'line_items': [
-        {'price': 'text_4', 'quantity': 5},
-      ],
-      'metadata': {'field_1': 6},
-      'subscription_data': {'description': 'text_7'},
+      'metadata': {'field_1': 4},
+      'subscription_data': {'description': 'text_5'},
       'active': true,
       'restrictions': {
-        'completed_sessions': {'limit': 9},
+        'completed_sessions': {'limit': 7, 'count': 8},
+      },
+      'line_items': {
+        'data': [
+          {
+            'id': 'text_9',
+            'description': 'text_10',
+            'quantity': 11,
+            'amount_total': 12,
+            'amount_subtotal': 13,
+            'currency': 'text_14',
+            'price': {
+              'id': 'text_15',
+              'type': 'text_16',
+              'created': 17,
+              'livemode': true,
+              'nickname': 'text_19',
+              'active': true,
+              'product': 'text_21',
+              'currency': 'text_22',
+              'unit_amount': 23,
+              'recurring': {'interval': 'text_24', 'interval_count': 25},
+              'lookup_key': 'text_26',
+              'tax_behavior': 'text_27',
+              'metadata': {'field_1': 28},
+            },
+          },
+        ],
+        'has_more': false,
       },
     });
   });

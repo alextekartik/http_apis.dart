@@ -1,3 +1,10 @@
+## 1.7.0
+
+- Payment Links read their expanded line items (`lineItemList`, with
+  `expand: ['data.line_items']`: the price date is the only date of a link)
+  and the paid count of a link paid once
+  (`restrictions.completedSessions.count`).
+
 ## 1.6.0
 
 - Dashboard and back office calls: `getBalance`, `getAccount` (payout
