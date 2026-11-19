@@ -60,15 +60,18 @@ void main() {
     };
     expect((StripeApiPrice()..fillModel(apiFillOptions)).toMap(), {
       'id': 'text_1',
-      'nickname': 'text_2',
-      'active': false,
-      'product': 'text_4',
-      'currency': 'text_5',
-      'unit_amount': 6,
-      'recurring': {'interval': 'text_7', 'interval_count': 8},
-      'lookup_key': 'text_9',
-      'tax_behavior': 'text_10',
-      'metadata': {'field_1': 11},
+      'type': 'text_2',
+      'created': 3,
+      'livemode': true,
+      'nickname': 'text_5',
+      'active': true,
+      'product': 'text_7',
+      'currency': 'text_8',
+      'unit_amount': 9,
+      'recurring': {'interval': 'text_10', 'interval_count': 11},
+      'lookup_key': 'text_12',
+      'tax_behavior': 'text_13',
+      'metadata': {'field_1': 14},
     });
     map = {
       'id': 'price_1OCJgVJarQTbINzHAKSI2QsE',
@@ -100,6 +103,9 @@ void main() {
     var price = map.cv<StripeApiPrice>();
     expect(price.toMap(), {
       'id': 'price_1OCJgVJarQTbINzHAKSI2QsE',
+      'type': 'recurring',
+      'created': 1699957051,
+      'livemode': false,
       'nickname': null,
       'active': true,
       'product': 'prod_OmtgJbSbudZ2hT',
@@ -127,6 +133,12 @@ void main() {
         'name': 'text_2',
         'description': 'text_3',
         'tax_code': 'text_4',
+        'active': false,
+        'default_price': 'text_6',
+        'created': 7,
+        'updated': 8,
+        'livemode': false,
+        'metadata': {'field_1': 10},
       },
     );
   });
@@ -134,7 +146,18 @@ void main() {
     expect(
       (newModel().cv<StripeApiProductCreate>()..fillModel(apiFillOptions))
           .toMap(),
-      {'name': 'text_1', 'description': 'text_2', 'tax_code': 'text_3'},
+      {
+        'name': 'text_1',
+        'description': 'text_2',
+        'tax_code': 'text_3',
+        'active': true,
+        'default_price_data': {
+          'currency': 'text_5',
+          'unit_amount': 6,
+          'recurring': {'interval': 'text_7', 'interval_count': 8},
+        },
+        'metadata': {'field_1': 9},
+      },
     );
   });
   test('StripeApiPaymentLink', () {
@@ -142,12 +165,16 @@ void main() {
     expect(paymentLink.toMap(), {
       'id': 'text_1',
       'url': 'text_2',
+      'livemode': false,
       'line_items': [
-        {'price': 'text_3', 'quantity': 4},
+        {'price': 'text_4', 'quantity': 5},
       ],
-      'metadata': {'field_1': 5},
-      'subscription_data': {'description': 'text_6'},
-      'active': false,
+      'metadata': {'field_1': 6},
+      'subscription_data': {'description': 'text_7'},
+      'active': true,
+      'restrictions': {
+        'completed_sessions': {'limit': 9},
+      },
     });
     expect(
       paymentLink.uriWith(email: 'my_email', locale: 'my_locale').toString(),
@@ -187,6 +214,9 @@ void main() {
       'metadata': {'field_1': 3},
       'subscription_data': {'description': 'text_4'},
       'active': false,
+      'restrictions': {
+        'completed_sessions': {'limit': 6},
+      },
     });
     expect(
       (cvNewModel<StripeApiPaymentLinkUpdate>()..fillModel(apiFillOptions))
@@ -198,17 +228,24 @@ void main() {
         'metadata': {'field_1': 3},
         'subscription_data': {'description': 'text_4'},
         'active': false,
+        'restrictions': {
+          'completed_sessions': {'limit': 6},
+        },
       },
     );
     expect((StripeApiPaymentLink()..fillModel(apiFillOptions)).toMap(), {
       'id': 'text_1',
       'url': 'text_2',
+      'livemode': false,
       'line_items': [
-        {'price': 'text_3', 'quantity': 4},
+        {'price': 'text_4', 'quantity': 5},
       ],
-      'metadata': {'field_1': 5},
-      'subscription_data': {'description': 'text_6'},
-      'active': false,
+      'metadata': {'field_1': 6},
+      'subscription_data': {'description': 'text_7'},
+      'active': true,
+      'restrictions': {
+        'completed_sessions': {'limit': 9},
+      },
     });
   });
   test('create_product', () {

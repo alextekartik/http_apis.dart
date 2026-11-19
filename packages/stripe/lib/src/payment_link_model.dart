@@ -71,8 +71,28 @@ class StripeApiPaymentLink extends CvModelBase
 
   final recurring = CvModelField<StringApiPriceRecurring>('recurring');
 
+  /// Livemode.
+  final livemode = CvField<bool>('livemode');
+
   @override
-  List<CvField<Object?>> get fields => [id, url, ...createUpdateMixinFields];
+  List<CvField<Object?>> get fields => [
+    id,
+    url,
+    livemode,
+    ...createUpdateMixinFields,
+  ];
+}
+
+/// A page of Payment Links.
+class StripeApiPaymentLinkList extends CvModelBase {
+  /// More after.
+  final hasMore = CvField<bool>('has_more');
+
+  /// The links, newest first.
+  final data = CvModelListField<StripeApiPaymentLink>('data');
+
+  @override
+  List<CvField<Object?>> get fields => [data, hasMore];
 }
 
 /// https://stripe.com/docs/payment-links/customer-info

@@ -5,9 +5,14 @@ import 'package:tekartik_stripe_api/src/price_model.dart';
 import 'package:tekartik_stripe_api/src/product_model.dart';
 import 'package:tekartik_stripe_api/src/stripe_api.dart';
 
+import 'account.dart';
+import 'balance.dart';
 import 'billing_portal.dart';
+import 'charge.dart';
 import 'checkout_session.dart';
 import 'invoice.dart';
+import 'line_item.dart';
+import 'list_options.dart';
 import 'price_options.dart';
 import 'product_options.dart';
 import 'subscription.dart';
@@ -34,6 +39,41 @@ void initStripeApiModels() {
     ]);
     cvAddConstructor(StripeApiProductList.new);
     cvAddConstructor(StripeApiProductListOptions.new);
+    cvAddConstructors([
+      StripeApiDeleted.new,
+      StripeApiProductDefaultPriceData.new,
+      StripeApiPaymentLinkCompletedSessions.new,
+      StripeApiPaymentLinkRestrictions.new,
+      StripeApiPaymentLinkList.new,
+      StripeApiPaymentLinkListOptions.new,
+      StripeApiLineItem.new,
+      StripeApiLineItemList.new,
+      StripeApiCheckoutCustomerDetails.new,
+      StripeApiCheckoutSessionList.new,
+      StripeApiCheckoutSessionListOptions.new,
+      StripeApiBalance.new,
+      StripeApiBalanceAmount.new,
+      StripeApiBalanceTransaction.new,
+      StripeApiBalanceTransactionList.new,
+      StripeApiBalanceTransactionListOptions.new,
+      StripeApiPayout.new,
+      StripeApiPayoutList.new,
+      StripeApiPayoutListOptions.new,
+      StripeApiPayoutSchedule.new,
+      StripeApiAccount.new,
+      StripeApiAccountPayoutSettings.new,
+      StripeApiAccountDashboardSettings.new,
+      StripeApiAccountSettings.new,
+      StripeApiAccountBusinessProfile.new,
+      StripeApiBillingDetails.new,
+      StripeApiCharge.new,
+      StripeApiChargeList.new,
+      StripeApiChargeListOptions.new,
+      StripeApiRefundCreate.new,
+      StripeApiRefund.new,
+      StripeApiSubscriptionList.new,
+      StripeApiSubscriptionListOptions.new,
+    ]);
     cvAddConstructors([
       StripeApiPaymentLinkUpdate.new,
       StripeApiPriceUpdate.new,

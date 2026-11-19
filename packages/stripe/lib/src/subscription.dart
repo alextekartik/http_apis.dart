@@ -1,5 +1,6 @@
 import 'package:cv/cv.dart';
 
+import 'list_options.dart';
 import 'stripe_models.dart';
 
 /// Subscription statuses.
@@ -115,4 +116,41 @@ class StripeApiSubscriptionUpdate extends CvModelBase
 
   @override
   CvFields get fields => [cancelAtPeriodEnd, ...metadataMixinFields];
+}
+
+/// A page of subscriptions.
+class StripeApiSubscriptionList extends CvModelBase {
+  /// More after.
+  final hasMore = CvField<bool>('has_more');
+
+  /// The subscriptions, newest first.
+  final data = CvModelListField<StripeApiSubscription>('data');
+
+  @override
+  CvFields get fields => [data, hasMore];
+}
+
+/// https://docs.stripe.com/api/subscriptions/list
+class StripeApiSubscriptionListOptions extends CvModelBase
+    with StripeApiListOptionsMixin {
+  /// `active`, `past_due`, `canceled`, `all`... (`active` and the others not
+  /// canceled when null).
+  final status = CvField<String>('status');
+
+  /// The subscriptions of a customer.
+  final customer = CvField<String>('customer');
+
+  /// The subscriptions of a price.
+  final price = CvField<String>('price');
+
+  @override
+  CvFields get fields => [status, customer, price, ...listOptionsMixinFields];
+
+  /// The query parameters.
+  Map<String, Object> toQueryParameters() => {
+    ...listQueryParameters(),
+    'status': ?status.v,
+    'customer': ?customer.v,
+    'price': ?price.v,
+  };
 }

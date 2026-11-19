@@ -71,8 +71,17 @@ class StripeApiPriceListOptions extends CvModelBase {
   /// See [StripeApiProductListOptions.limit].
   final limit = CvField<int>('limit');
 
+  /// The page after this price id.
+  final startingAfter = CvField<String>('starting_after');
+
   @override
-  List<CvField<Object?>> get fields => [lookupKeys, active, productId, limit];
+  List<CvField<Object?>> get fields => [
+    lookupKeys,
+    active,
+    productId,
+    limit,
+    startingAfter,
+  ];
 
   /// The query parameters (`lookup_keys[]` repeated).
   Map<String, Object> toQueryParameters() => {
@@ -80,6 +89,7 @@ class StripeApiPriceListOptions extends CvModelBase {
     if (active.v case var active?) 'active': '$active',
     'product': ?productId.v,
     if (limit.v case var limit?) 'limit': '$limit',
+    'starting_after': ?startingAfter.v,
   };
 }
 

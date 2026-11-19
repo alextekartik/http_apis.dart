@@ -1,5 +1,7 @@
 import 'package:cv/cv.dart';
 
+import 'line_item.dart';
+import 'list_options.dart';
 import 'stripe_models.dart';
 
 /// A Checkout Session for a subscription.
@@ -185,6 +187,36 @@ class StripeApiCheckoutSession extends CvModelBase with StripeApiMetadataMixin {
   /// Livemode.
   final livemode = CvField<bool>('livemode');
 
+  /// Cents, after discounts and taxes.
+  final amountTotal = CvField<int>('amount_total');
+
+  /// Cents, before discounts and taxes.
+  final amountSubtotal = CvField<int>('amount_subtotal');
+
+  /// `eur`...
+  final currency = CvField<String>('currency');
+
+  /// Unix seconds.
+  final created = CvField<int>('created');
+
+  /// The email given to create the session.
+  final customerEmail = CvField<String>('customer_email');
+
+  /// Who paid (email, name, phone), once complete.
+  final customerDetails = CvModelField<StripeApiCheckoutCustomerDetails>(
+    'customer_details',
+  );
+
+  /// The payment intent id of a `payment` session.
+  final paymentIntent = CvField<String>('payment_intent');
+
+  /// The Payment Link that opened the session (`plink_...`), if any.
+  final paymentLink = CvField<String>('payment_link');
+
+  /// The line items, when expanded (`expand: ['data.line_items']` in a list,
+  /// `line_items` for one session).
+  final lineItems = CvModelField<StripeApiLineItemList>('line_items');
+
   @override
   CvFields get fields => [
     id,
@@ -196,6 +228,88 @@ class StripeApiCheckoutSession extends CvModelBase with StripeApiMetadataMixin {
     customer,
     subscription,
     livemode,
+    amountTotal,
+    amountSubtotal,
+    currency,
+    created,
+    customerEmail,
+    customerDetails,
+    paymentIntent,
+    paymentLink,
+    lineItems,
     ...metadataMixinFields,
   ];
+}
+
+/// `status` of a completed Checkout Session.
+const stripeCheckoutSessionStatusComplete = 'complete';
+
+/// `status` of an expired Checkout Session.
+const stripeCheckoutSessionStatusExpired = 'expired';
+
+/// `status` of an open Checkout Session.
+const stripeCheckoutSessionStatusOpen = 'open';
+
+/// `payment_status` of a paid Checkout Session.
+const stripeCheckoutSessionPaymentStatusPaid = 'paid';
+
+/// `customer_details` of a Checkout Session.
+class StripeApiCheckoutCustomerDetails extends CvModelBase {
+  /// The email.
+  final email = CvField<String>('email');
+
+  /// The name.
+  final name = CvField<String>('name');
+
+  /// The phone, when collected.
+  final phone = CvField<String>('phone');
+
+  @override
+  CvFields get fields => [email, name, phone];
+}
+
+/// A page of Checkout Sessions.
+class StripeApiCheckoutSessionList extends CvModelBase {
+  /// More after.
+  final hasMore = CvField<bool>('has_more');
+
+  /// The sessions, newest first.
+  final data = CvModelListField<StripeApiCheckoutSession>('data');
+
+  @override
+  CvFields get fields => [data, hasMore];
+}
+
+/// https://docs.stripe.com/api/checkout/sessions/list
+class StripeApiCheckoutSessionListOptions extends CvModelBase
+    with StripeApiListOptionsMixin {
+  /// The sessions of a Payment Link (`plink_...`).
+  final paymentLink = CvField<String>('payment_link');
+
+  /// The sessions of a payment intent.
+  final paymentIntent = CvField<String>('payment_intent');
+
+  /// The sessions of a customer.
+  final customer = CvField<String>('customer');
+
+  /// [stripeCheckoutSessionStatusComplete]...
+  final status = CvField<String>('status');
+
+  @override
+  CvFields get fields => [
+    paymentLink,
+    paymentIntent,
+    customer,
+    status,
+    ...listOptionsMixinFields,
+  ];
+
+  /// The query parameters.
+  Map<String, Object> toQueryParameters() => {
+    ...listQueryParameters(),
+    'payment_link': ?paymentLink.v,
+    'payment_intent': ?paymentIntent.v,
+    'customer': ?customer.v,
+    'status': ?status.v,
+  };
 }

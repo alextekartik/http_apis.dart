@@ -7,7 +7,9 @@
 /// Webhooks: [StripeWebhookSignature.verify] then [StripeApiEvent].
 library;
 
+export 'src/account.dart';
 export 'src/api_options.dart' show StripeApiMetadata;
+export 'src/balance.dart';
 export 'src/billing_portal.dart'
     show
         StripeApiBillingPortalConfiguration,
@@ -15,6 +17,7 @@ export 'src/billing_portal.dart'
         StripeApiBillingPortalConfigurationList,
         StripeApiBillingPortalSession,
         StripeApiBillingPortalSessionCreate;
+export 'src/charge.dart';
 export 'src/checkout_session.dart';
 export 'src/constant.dart';
 export 'src/credentials_enc.dart'
@@ -24,13 +27,22 @@ export 'src/credentials_enc.dart'
         stripeApiCredentialsToJsonEnc,
         stripeApiCredentialsFromMapEnc,
         stripeApiKeyObfuscate;
+export 'src/error.dart' show stripeApiErrorMessage;
 export 'src/invoice.dart';
+export 'src/line_item.dart';
+export 'src/list_options.dart';
 export 'src/payment_link_model.dart'
-    show StripeApiPaymentLink, StripeApiPaymentLinkExt;
+    show
+        StripeApiPaymentLink,
+        StripeApiPaymentLinkExt,
+        StripeApiPaymentLinkList;
 export 'src/payment_link_options.dart'
     show
         StripeApiPaymentLinkCreate,
+        StripeApiPaymentLinkCompletedSessions,
         StripeApiPaymentLinkLineItem,
+        StripeApiPaymentLinkListOptions,
+        StripeApiPaymentLinkRestrictions,
         StripeApiPaymentLinkSubscriptionData,
         StripeApiPaymentLinkUpdate;
 export 'src/price_model.dart' show StripeApiPrice, StripeApiPriceList;
@@ -43,7 +55,10 @@ export 'src/price_options.dart'
 export 'src/product_model.dart'
     show StripeApiProduct, StripeApiProductListOptions, StripeApiProductList;
 export 'src/product_options.dart'
-    show StripeApiProductCreate, StripeApiProductUpdate;
+    show
+        StripeApiProductCreate,
+        StripeApiProductDefaultPriceData,
+        StripeApiProductUpdate;
 export 'src/stripe_api.dart'
     show StripeApi, StripeApiCredentials, debugStripeApi;
 export 'src/stripe_models.dart'

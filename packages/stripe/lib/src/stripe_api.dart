@@ -12,8 +12,13 @@ import 'package:tekartik_stripe_api/src/price_options.dart';
 import 'package:tekartik_stripe_api/src/product_model.dart';
 import 'package:tekartik_stripe_api/src/product_options.dart';
 
+import 'account.dart';
+import 'balance.dart';
+import 'charge.dart';
 import 'credentials_enc.dart';
 import 'invoice.dart';
+import 'line_item.dart';
+import 'list_options.dart';
 import 'payment_link_model.dart';
 import 'stripe_models.dart';
 import 'subscription.dart';
@@ -368,6 +373,103 @@ class StripeApi {
       _uri('webhook_endpoints/${_pathId(webhookEndpointId)}'),
     );
   }
+
+  /// Delete a product (only one without prices; archive the others with
+  /// [updateProduct] `active: false`).
+  /// https://docs.stripe.com/api/products/delete
+  Future<StripeApiDeleted> deleteProduct(String productId) =>
+      _delete<StripeApiDeleted>(_uri('products/${_pathId(productId)}'));
+
+  /// A page of Payment Links, newest first.
+  /// https://docs.stripe.com/api/payment_links/payment_links/list
+  Future<StripeApiPaymentLinkList> listPaymentLinks(
+    StripeApiPaymentLinkListOptions options,
+  ) => _get<StripeApiPaymentLinkList>(
+    _uri('payment_links').replace(queryParameters: options.toQueryParameters()),
+  );
+
+  /// The line items of a Payment Link (the first 100).
+  Future<StripeApiLineItemList> listPaymentLinkLineItems(
+    String paymentLinkId,
+  ) => _get<StripeApiLineItemList>(
+    _uri(
+      'payment_links/${_pathId(paymentLinkId)}/line_items',
+    ).replace(queryParameters: {'limit': '100'}),
+  );
+
+  /// A page of Checkout Sessions, newest first (those of a Payment Link with
+  /// [StripeApiCheckoutSessionListOptions.paymentLink]).
+  /// https://docs.stripe.com/api/checkout/sessions/list
+  Future<StripeApiCheckoutSessionList> listCheckoutSessions(
+    StripeApiCheckoutSessionListOptions options,
+  ) => _get<StripeApiCheckoutSessionList>(
+    _uri(
+      'checkout/sessions',
+    ).replace(queryParameters: options.toQueryParameters()),
+  );
+
+  /// The line items of a Checkout Session (the first 100).
+  /// https://docs.stripe.com/api/checkout/sessions/line_items
+  Future<StripeApiLineItemList> listCheckoutSessionLineItems(
+    String sessionId,
+  ) => _get<StripeApiLineItemList>(
+    _uri(
+      'checkout/sessions/${_pathId(sessionId)}/line_items',
+    ).replace(queryParameters: {'limit': '100'}),
+  );
+
+  /// The balance of the account.
+  /// https://docs.stripe.com/api/balance/balance_retrieve
+  Future<StripeApiBalance> getBalance() =>
+      _get<StripeApiBalance>(_uri('balance'));
+
+  /// A page of balance transactions, newest first (those of a payout with
+  /// [StripeApiBalanceTransactionListOptions.payout]).
+  /// https://docs.stripe.com/api/balance_transactions/list
+  Future<StripeApiBalanceTransactionList> listBalanceTransactions(
+    StripeApiBalanceTransactionListOptions options,
+  ) => _get<StripeApiBalanceTransactionList>(
+    _uri(
+      'balance_transactions',
+    ).replace(queryParameters: options.toQueryParameters()),
+  );
+
+  /// The account of the key (a restricted key may not read it).
+  /// https://docs.stripe.com/api/accounts/retrieve
+  Future<StripeApiAccount> getAccount() =>
+      _get<StripeApiAccount>(_uri('account'));
+
+  /// A page of charges, newest first.
+  /// https://docs.stripe.com/api/charges/list
+  Future<StripeApiChargeList> listCharges(StripeApiChargeListOptions options) =>
+      _get<StripeApiChargeList>(
+        _uri('charges').replace(queryParameters: options.toQueryParameters()),
+      );
+
+  /// Get a charge.
+  Future<StripeApiCharge> getCharge(String chargeId) =>
+      _get<StripeApiCharge>(_uri('charges/${_pathId(chargeId)}'));
+
+  /// Refund a charge or a payment intent (all of it unless
+  /// [StripeApiRefundCreate.amount]).
+  /// https://docs.stripe.com/api/refunds/create
+  Future<StripeApiRefund> createRefund(StripeApiRefundCreate options) =>
+      _send<StripeApiRefund>(_uri('refunds'), options.toStripeApiBodyFields());
+
+  /// A page of payouts, newest first.
+  /// https://docs.stripe.com/api/payouts/list
+  Future<StripeApiPayoutList> listPayouts(StripeApiPayoutListOptions options) =>
+      _get<StripeApiPayoutList>(
+        _uri('payouts').replace(queryParameters: options.toQueryParameters()),
+      );
+
+  /// A page of subscriptions, newest first.
+  /// https://docs.stripe.com/api/subscriptions/list
+  Future<StripeApiSubscriptionList> listSubscriptions(
+    StripeApiSubscriptionListOptions options,
+  ) => _get<StripeApiSubscriptionList>(
+    _uri('subscriptions').replace(queryParameters: options.toQueryParameters()),
+  );
 
   Future<void> close() async {
     _clientOrNull?.close();

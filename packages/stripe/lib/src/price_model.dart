@@ -43,9 +43,21 @@ class StripeApiPrice extends CvModelBase
         StripeApiMetadataMixin {
   final id = CvField<String>('id');
 
+  /// `one_time` or `recurring`.
+  final type = CvField<String>('type');
+
+  /// Unix seconds.
+  final created = CvField<int>('created');
+
+  /// Livemode.
+  final livemode = CvField<bool>('livemode');
+
   @override
   List<CvField<Object?>> get fields => [
     id,
+    type,
+    created,
+    livemode,
     ...createUpdatePriceMixinFields,
     ...priceMixinFields,
     ...metadataMixinFields,
