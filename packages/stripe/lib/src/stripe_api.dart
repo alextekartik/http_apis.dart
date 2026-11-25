@@ -1,8 +1,8 @@
 import 'package:cv/cv_json.dart';
+import 'package:http/http.dart' as http;
 import 'package:path/path.dart';
 // ignore: depend_on_referenced_packages
 import 'package:tekartik_common_utils/common_utils_import.dart';
-import 'package:tekartik_http/basic_auth_client.dart';
 import 'package:tekartik_http/http_client.dart';
 import 'package:tekartik_stripe_api/src/billing_portal.dart';
 import 'package:tekartik_stripe_api/src/checkout_session.dart';
@@ -103,9 +103,8 @@ class StripeApi {
     initStripeApiModels();
   }
 
-  Client get _client => _clientOrNull ??= BasicAuthClient(
+  Client get _client => _clientOrNull ??= _StripeBearerAuthClient(
     credentials.secretKey ?? credentials.publishableKey!,
-    '',
     inner: baseClient,
   );
   Client? _clientOrNull;
@@ -473,5 +472,37 @@ class StripeApi {
 
   Future<void> close() async {
     _clientOrNull?.close();
+  }
+}
+
+/// Sends the key as `Authorization: Bearer <key>` on every request.
+///
+/// Not Basic auth: Stripe ignores a Basic `Authorization` header when the
+/// request has an `Origin` header, as every request of a browser has, and
+/// answers 401 "You did not provide an API key" (checked 2026-11-25); Bearer
+/// works from the web and the VM alike.
+class _StripeBearerAuthClient extends http.BaseClient {
+  final String _authorization;
+  final http.Client _inner;
+  final bool _closeInner;
+
+  /// Sends [key] through [inner] (a new client, closed by [close], when
+  /// null).
+  _StripeBearerAuthClient(String key, {http.Client? inner})
+    : _authorization = 'Bearer $key',
+      _inner = inner ?? http.Client(),
+      _closeInner = inner == null;
+
+  @override
+  Future<http.StreamedResponse> send(http.BaseRequest request) {
+    request.headers['Authorization'] = _authorization;
+    return _inner.send(request);
+  }
+
+  @override
+  void close() {
+    if (_closeInner) {
+      _inner.close();
+    }
   }
 }

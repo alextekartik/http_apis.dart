@@ -49,7 +49,8 @@ void main() {
         request.headers['content-type'],
         'application/x-www-form-urlencoded',
       );
-      expect(request.headers['authorization'], startsWith('Basic '));
+      // Bearer: Stripe ignores Basic auth from a browser (an Origin header).
+      expect(request.headers['authorization'], 'Bearer sk_test_fake');
       expect(request.bodyFields, {'active': 'false'});
 
       price = await api.getPrice('price_1');

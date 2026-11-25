@@ -1,3 +1,9 @@
+## 1.7.1
+
+- The key is sent as `Authorization: Bearer`, not Basic auth: Stripe ignores
+  a Basic header in a browser request (an `Origin` header) and answered 401
+  "You did not provide an API key" on the web.
+
 ## 1.7.0
 
 - Payment Links read their expanded line items (`lineItemList`, with
